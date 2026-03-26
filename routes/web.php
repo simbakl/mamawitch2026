@@ -5,8 +5,12 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProAudioController;
 use App\Http\Controllers\ProController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TechSheetPdfController;
 use Illuminate\Support\Facades\Route;
+
+// Sitemap
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Public pages
 Route::get('/', [PageController::class, 'home'])->name('home');

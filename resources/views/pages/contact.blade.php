@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Contact')
+@section('meta_description', 'Contactez Mama Witch pour booking, presse ou toute demande.')
 
 @section('content')
 <div class="pt-24 pb-20 px-4">

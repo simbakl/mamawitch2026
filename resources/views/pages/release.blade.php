@@ -1,5 +1,10 @@
 @extends('layouts.app')
 @section('title', $release->title)
+@section('meta_description', $release->title . ' - ' . ucfirst($release->type) . ' de Mama Witch.')
+@section('og_type', 'music.album')
+@if ($release->cover)
+    @section('og_image', asset('storage/' . $release->cover))
+@endif
 
 @section('content')
 <div class="pt-24 pb-20 px-4">

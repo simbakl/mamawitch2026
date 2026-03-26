@@ -1,5 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Actualites')
+@section('title', 'Actualités')
+@section('meta_description', 'Toutes les actualités de Mama Witch, groupe de Hard Rock à Paris.')
 
 @section('content')
 <div class="pt-24 pb-20 px-4">

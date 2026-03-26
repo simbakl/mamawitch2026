@@ -1,5 +1,10 @@
 @extends('layouts.app')
 @section('title', $article->title)
+@section('meta_description', $article->excerpt)
+@section('og_type', 'article')
+@if ($article->featured_image)
+    @section('og_image', asset('storage/' . $article->featured_image))
+@endif
 
 @section('content')
 <div class="pt-24 pb-20 px-4">

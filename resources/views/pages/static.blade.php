@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title', $page->title)
+@section('meta_description', Str::limit(strip_tags($page->body), 160))
 
 @section('content')
 <div class="pt-24 pb-20 px-4">

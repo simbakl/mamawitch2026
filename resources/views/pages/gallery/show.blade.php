@@ -1,5 +1,9 @@
 @extends('layouts.app')
 @section('title', $gallery->title)
+@section('meta_description', $gallery->description ?? 'Galerie photo - ' . $gallery->title)
+@if ($gallery->cover_photo)
+    @section('og_image', asset('storage/' . $gallery->cover_photo))
+@endif
 
 @section('content')
 <div class="pt-24 pb-20 px-4">

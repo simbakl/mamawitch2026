@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Discographie')
+@section('meta_description', 'Discographie complète de Mama Witch - EPs, singles et albums.')
 
 @section('content')
 <div class="pt-24 pb-20 px-4">

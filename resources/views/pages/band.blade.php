@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Le Groupe')
+@section('meta_description', 'Découvrez les membres de Mama Witch, groupe de Hard Rock à Paris.')
 
 @section('content')
 <div class="pt-24 pb-20 px-4">

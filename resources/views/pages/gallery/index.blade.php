@@ -1,5 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Galerie')
+@section('title', 'Galerie Photos')
+@section('meta_description', 'Photos de concerts, backstage et sessions studio de Mama Witch.')
 
 @section('content')
 <div class="pt-24 pb-20 px-4">
