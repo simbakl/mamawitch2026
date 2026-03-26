@@ -29,6 +29,14 @@
                     </a>
                 @endforeach
 
+                @foreach (App\Models\StaticPage::inMenu()->get() as $menuPage)
+                    <a href="{{ url('/' . $menuPage->slug) }}"
+                       class="px-3 py-2 text-sm font-heading uppercase tracking-wider transition-colors duration-200
+                              {{ request()->is($menuPage->slug) ? 'text-mw-red' : 'text-gray-300 hover:text-white' }}">
+                        {{ $menuPage->title }}
+                    </a>
+                @endforeach
+
                 <a href="{{ url('/admin') }}"
                    class="ml-4 px-4 py-1.5 text-xs font-heading uppercase tracking-wider border border-mw-red text-mw-red hover:bg-mw-red hover:text-white transition-all duration-200 rounded">
                     Espace Pro
@@ -55,6 +63,13 @@
                    class="block px-3 py-2 font-heading uppercase tracking-wider text-sm
                           {{ request()->routeIs($item['route'] . '*') ? 'text-mw-red' : 'text-gray-300 hover:text-white' }}">
                     {{ $item['label'] }}
+                </a>
+            @endforeach
+            @foreach (App\Models\StaticPage::inMenu()->get() as $menuPage)
+                <a href="{{ url('/' . $menuPage->slug) }}"
+                   class="block px-3 py-2 font-heading uppercase tracking-wider text-sm
+                          {{ request()->is($menuPage->slug) ? 'text-mw-red' : 'text-gray-300 hover:text-white' }}">
+                    {{ $menuPage->title }}
                 </a>
             @endforeach
             <a href="{{ url('/admin') }}"

@@ -7,13 +7,14 @@ use Illuminate\Support\Str;
 
 class StaticPage extends Model
 {
-    protected $fillable = ['title', 'slug', 'body', 'is_published', 'show_in_menu', 'menu_order'];
+    protected $fillable = ['title', 'slug', 'body', 'is_published', 'show_in_menu', 'show_in_footer', 'menu_order'];
 
     protected function casts(): array
     {
         return [
             'is_published' => 'boolean',
             'show_in_menu' => 'boolean',
+            'show_in_footer' => 'boolean',
         ];
     }
 
@@ -33,6 +34,11 @@ class StaticPage extends Model
 
     public function scopeInMenu($query)
     {
-        return $query->where('show_in_menu', true)->orderBy('menu_order');
+        return $query->published()->where('show_in_menu', true)->orderBy('menu_order');
+    }
+
+    public function scopeInFooter($query)
+    {
+        return $query->published()->where('show_in_footer', true)->orderBy('menu_order');
     }
 }

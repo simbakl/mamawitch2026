@@ -58,6 +58,9 @@ class StaticPageResource extends Resource
                         Forms\Components\Toggle::make('show_in_menu')
                             ->label('Afficher dans le menu')
                             ->default(false),
+                        Forms\Components\Toggle::make('show_in_footer')
+                            ->label('Afficher dans le footer')
+                            ->default(false),
                         Forms\Components\TextInput::make('menu_order')
                             ->label('Ordre dans le menu')
                             ->numeric()
@@ -84,6 +87,9 @@ class StaticPageResource extends Resource
                     ->boolean(),
                 Tables\Columns\IconColumn::make('show_in_menu')
                     ->label('Menu')
+                    ->boolean(),
+                Tables\Columns\IconColumn::make('show_in_footer')
+                    ->label('Footer')
                     ->boolean(),
             ])
             ->actions([

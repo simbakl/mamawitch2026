@@ -26,12 +26,14 @@
     </div>
 
     {{-- Scroll indicator --}}
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+    <a href="#next-section" class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce cursor-pointer hover:text-white transition-colors">
         <svg class="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
         </svg>
-    </div>
+    </a>
 </section>
+
+<div id="next-section"></div>
 
 {{-- PROCHAINS CONCERTS --}}
 @if ($concerts->count())

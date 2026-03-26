@@ -52,9 +52,9 @@
         <div class="mt-10 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
             <p>&copy; {{ date('Y') }} Mama Witch. Tous droits reserves.</p>
             <div class="flex space-x-4 mt-2 md:mt-0">
-                <a href="{{ url('/mentions-legales') }}" class="hover:text-gray-400 transition-colors">Mentions legales</a>
-                <a href="{{ url('/politique-de-confidentialite') }}" class="hover:text-gray-400 transition-colors">Confidentialite</a>
-                <a href="{{ url('/cgu') }}" class="hover:text-gray-400 transition-colors">CGU</a>
+                @foreach (App\Models\StaticPage::inFooter()->get() as $legalPage)
+                    <a href="{{ url('/' . $legalPage->slug) }}" class="hover:text-gray-400 transition-colors">{{ $legalPage->title }}</a>
+                @endforeach
             </div>
         </div>
     </div>
