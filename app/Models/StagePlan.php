@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class StagePlan extends Model
 {
-    protected $fillable = ['name', 'elements', 'stage_width', 'stage_depth'];
+    protected $fillable = ['name', 'image', 'elements', 'stage_width', 'stage_depth'];
 
     protected function casts(): array
     {

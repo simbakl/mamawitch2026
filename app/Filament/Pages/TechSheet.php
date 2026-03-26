@@ -28,8 +28,19 @@ class TechSheet extends Page implements Forms\Contracts\HasForms
 
     public ?array $data = [];
 
+    // Stage plan editor data
+    public array $stagePlanElements = [];
+    public int $stagePlanWidth = 800;
+    public int $stagePlanDepth = 500;
+
     public function mount(): void
     {
+        $stagePlan = StagePlan::first();
+
+        $this->stagePlanElements = $stagePlan?->elements ?? [];
+        $this->stagePlanWidth = $stagePlan?->stage_width ?? 800;
+        $this->stagePlanDepth = $stagePlan?->stage_depth ?? 500;
+
         $this->form->fill([
             'setup_time' => GlobalTechRequirement::get('setup_time'),
             'soundcheck_time' => GlobalTechRequirement::get('soundcheck_time'),
@@ -77,8 +88,9 @@ class TechSheet extends Page implements Forms\Contracts\HasForms
     {
         $state = $this->form->getState();
 
-        foreach ($state as $key => $value) {
-            GlobalTechRequirement::set($key, $value);
+        $globalFields = ['setup_time', 'soundcheck_time', 'teardown_time', 'global_notes', 'global_monitors', 'global_other'];
+        foreach ($globalFields as $key) {
+            GlobalTechRequirement::set($key, $state[$key] ?? null);
         }
 
         Notification::make()
@@ -87,14 +99,28 @@ class TechSheet extends Page implements Forms\Contracts\HasForms
             ->send();
     }
 
+    public function saveStagePlan(array $elements, int $stageWidth, int $stageDepth): void
+    {
+        $stagePlan = StagePlan::firstOrCreate([], ['name' => 'Plan de scène']);
+        $stagePlan->update([
+            'elements' => $elements,
+            'stage_width' => $stageWidth,
+            'stage_depth' => $stageDepth,
+        ]);
+
+        $this->stagePlanElements = $elements;
+        $this->stagePlanWidth = $stageWidth;
+        $this->stagePlanDepth = $stageDepth;
+
+        Notification::make()
+            ->title('Plan de scène sauvegardé')
+            ->success()
+            ->send();
+    }
+
     public function getMembers()
     {
         return Member::with(['equipment', 'techRequirement'])->orderBy('sort_order')->get();
-    }
-
-    public function getStagePlan()
-    {
-        return StagePlan::first();
     }
 
     public static function canAccess(): bool

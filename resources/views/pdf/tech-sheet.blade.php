@@ -78,6 +78,65 @@
         </div>
     @endif
 
+    {{-- STAGE PLAN --}}
+    @if (count($stagePlanElements) > 0)
+        @php
+            $stageW = $stagePlan->stage_width ?: 800;
+            $stageD = $stagePlan->stage_depth ?: 500;
+            $canvasWidthPx = 500;
+            $canvasHeightPx = round($canvasWidthPx * $stageD / $stageW);
+
+            $colors = [
+                'guitar_amp' => '#ef4444', 'bass_amp' => '#f97316', 'drum_kit' => '#8b5cf6',
+                'keyboard' => '#3b82f6', 'monitor_wedge' => '#22c55e', 'mic_stand' => '#a855f7',
+                'di_box' => '#64748b', 'vocal_mic' => '#ec4899', 'power_strip' => '#eab308',
+                'riser' => '#78716c', 'custom' => '#6b7280',
+            ];
+            $labels = [
+                'guitar_amp' => 'AMP', 'bass_amp' => 'BASS', 'drum_kit' => 'DRUMS',
+                'keyboard' => 'KEYS', 'monitor_wedge' => 'MON', 'mic_stand' => 'MIC',
+                'di_box' => 'DI', 'vocal_mic' => 'VOX', 'power_strip' => 'PWR',
+                'riser' => 'RISER', 'custom' => '',
+            ];
+        @endphp
+        <div class="section" style="page-break-inside: avoid;">
+            <div class="section-title">Plan de scene</div>
+            <div style="position: relative; width: {{ $canvasWidthPx }}px; height: {{ $canvasHeightPx }}px; background: #f0f0f0; border: 2px solid #333; margin: 10px auto;">
+                {{-- Back label --}}
+                <div style="position: absolute; top: 3px; width: 100%; text-align: center; font-size: 7px; color: #aaa; text-transform: uppercase; letter-spacing: 2px;">FOND DE SCENE</div>
+                {{-- Stage front line --}}
+                <div style="position: absolute; bottom: {{ round($canvasHeightPx * 0.08) }}px; left: 5%; right: 5%; border-top: 1px dashed #999;"></div>
+                {{-- Public label --}}
+                <div style="position: absolute; bottom: 3px; width: 100%; text-align: center; font-size: 7px; color: #aaa; text-transform: uppercase; letter-spacing: 2px;">PUBLIC</div>
+
+                @foreach ($stagePlanElements as $el)
+                    @php
+                        $bg = $colors[$el['type']] ?? '#6b7280';
+                        $elLeft = round($el['x'] / 100 * $canvasWidthPx);
+                        $elTop = round($el['y'] / 100 * $canvasHeightPx);
+                        $elW = round($el['width'] / 100 * $canvasWidthPx);
+                        $elH = round($el['height'] / 100 * $canvasHeightPx);
+                        $shortLabel = $labels[$el['type']] ?? '';
+                    @endphp
+                    <div style="position: absolute; left: {{ $elLeft }}px; top: {{ $elTop }}px; width: {{ $elW }}px; height: {{ $elH }}px; background: {{ $bg }}; color: white; font-size: 7px; text-align: center; border-radius: 2px; overflow: hidden; padding-top: {{ max(1, round($elH / 2) - 6) }}px;">
+                        <div style="font-size: 8px; font-weight: bold; letter-spacing: 0.5px;">{{ $shortLabel }}</div>
+                        <div style="font-size: 6px; margin-top: 1px;">{{ $el['label'] }}</div>
+                    </div>
+                @endforeach
+            </div>
+            <div style="text-align: center; font-size: 9px; color: #666; margin-top: 5px;">
+                Scene : {{ $stageW / 100 }}m x {{ $stageD / 100 }}m
+            </div>
+        </div>
+    @elseif ($stagePlan?->image)
+        <div class="section" style="page-break-inside: avoid;">
+            <div class="section-title">Plan de scene</div>
+            <div style="text-align: center; padding: 10px 0;">
+                <img src="{{ public_path('storage/' . $stagePlan->image) }}" style="max-width: 100%; max-height: 350px;">
+            </div>
+        </div>
+    @endif
+
     {{-- EQUIPMENT PER MEMBER --}}
     <div class="section">
         <div class="section-title">Materiel du groupe (backline)</div>

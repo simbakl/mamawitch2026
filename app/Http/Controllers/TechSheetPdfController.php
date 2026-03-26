@@ -26,6 +26,7 @@ class TechSheetPdfController extends Controller
         $pdf = Pdf::loadView('pdf.tech-sheet', [
             'members' => $members,
             'stagePlan' => $stagePlan,
+            'stagePlanElements' => $stagePlan?->elements ?? [],
             'global' => $globalRequirements,
         ]);
 
