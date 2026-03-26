@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProAccountResource\Pages;
+use App\Mail\ProAccessApprovedMail;
+use App\Mail\ProInvitationMail;
 use App\Models\MusicProject;
 use App\Models\ProAccount;
 use App\Models\ProType;
@@ -11,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class ProAccountResource extends Resource
@@ -187,6 +190,7 @@ class ProAccountResource extends Resource
                             'status' => 'approved',
                             'approved_at' => now(),
                         ]);
+                        Mail::to($record->email)->send(new ProAccessApprovedMail($record));
                     }),
                 Tables\Actions\Action::make('reject')
                     ->label('Refuser')
@@ -208,6 +212,7 @@ class ProAccountResource extends Resource
                             'status' => 'invited',
                             'invitation_sent_at' => now(),
                         ]);
+                        Mail::to($record->email)->send(new ProInvitationMail($record));
                     })
                     ->visible(fn (ProAccount $record) => in_array($record->status, ['pending', 'approved'])),
                 Tables\Actions\EditAction::make(),

@@ -3,6 +3,8 @@
 use App\Http\Controllers\AdminAudioController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\ProAudioController;
+use App\Http\Controllers\ProController;
 use App\Http\Controllers\TechSheetPdfController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,9 +33,38 @@ Route::get('/admin/audio/{track}', [AdminAudioController::class, 'stream'])
     ->middleware('auth')
     ->name('admin.audio.stream');
 
-// Google SSO
+// Pro - Public
+Route::get('/pro/demande', [ProController::class, 'accessRequest'])->name('pro.request');
+Route::post('/pro/demande', [ProController::class, 'accessRequestSubmit'])->name('pro.request.submit');
+Route::get('/pro/invitation/{token}', [ProController::class, 'invitation'])->name('pro.invitation');
+
+// Pro - Authenticated
+Route::middleware(['auth', 'pro'])->prefix('pro')->name('pro.')->group(function () {
+    Route::get('/', [ProController::class, 'dashboard'])->name('dashboard');
+    Route::get('/content/{slug}', [ProController::class, 'content'])->name('content');
+    Route::get('/download/{type}/{filename}', [ProController::class, 'downloadFile'])->where('filename', '.*')->name('download');
+    Route::get('/download-zip/{type}', [ProController::class, 'downloadZip'])->name('download.zip');
+    Route::get('/project/{project}', [ProController::class, 'musicProject'])->name('project');
+});
+
+// Pro - Secure audio (chunked streaming)
+Route::middleware(['auth', 'pro'])->group(function () {
+    Route::get('/pro/audio/{track}/info', [ProAudioController::class, 'info'])->name('pro.audio.info');
+    Route::get('/pro/audio/{track}/chunk/{index}', [ProAudioController::class, 'chunk'])->name('pro.audio.chunk');
+});
+Route::get('/pro/audio/{track}', [ProAudioController::class, 'stream'])
+    ->middleware(['auth', 'pro'])
+    ->name('pro.audio.stream');
+
+// Auth
 Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
+Route::post('/logout', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/');
+})->name('logout');
 
 // Static pages (must be last to avoid catching other routes)
 Route::get('/{slug}', [PageController::class, 'staticPage'])->name('static.page');

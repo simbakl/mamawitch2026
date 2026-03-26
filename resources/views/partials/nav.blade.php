@@ -37,7 +37,7 @@
                     </a>
                 @endforeach
 
-                <a href="{{ url('/admin') }}"
+                <a href="{{ auth()->check() && auth()->user()->hasRole('pro') ? route('pro.dashboard') : route('pro.request') }}"
                    class="ml-4 px-4 py-1.5 text-xs font-heading uppercase tracking-wider border border-mw-red text-mw-red hover:bg-mw-red hover:text-white transition-all duration-200 rounded">
                     Espace Pro
                 </a>
@@ -72,7 +72,7 @@
                     {{ $menuPage->title }}
                 </a>
             @endforeach
-            <a href="{{ url('/admin') }}"
+            <a href="{{ auth()->check() && auth()->user()->hasRole('pro') ? route('pro.dashboard') : route('pro.request') }}"
                class="block px-3 py-2 font-heading uppercase tracking-wider text-sm text-mw-red">
                 Espace Pro
             </a>
