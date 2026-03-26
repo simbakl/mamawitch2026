@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminAudioController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\TechSheetPdfController;
@@ -24,6 +25,11 @@ Route::post('/contact', [PageController::class, 'contactSubmit'])->name('contact
 Route::get('/tech-sheet/pdf', [TechSheetPdfController::class, 'generate'])
     ->middleware('auth')
     ->name('tech-sheet.pdf');
+
+// Admin audio streaming
+Route::get('/admin/audio/{track}', [AdminAudioController::class, 'stream'])
+    ->middleware('auth')
+    ->name('admin.audio.stream');
 
 // Google SSO
 Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');

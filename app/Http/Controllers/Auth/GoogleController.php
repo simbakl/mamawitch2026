@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProAccount;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -22,23 +23,52 @@ class GoogleController extends Controller
             ->orWhere('email', $googleUser->getEmail())
             ->first();
 
-        if (! $user) {
+        // Existing user — link Google if needed and login
+        if ($user) {
+            if (! $user->google_id) {
+                $user->update([
+                    'google_id' => $googleUser->getId(),
+                    'avatar' => $googleUser->getAvatar(),
+                ]);
+            }
+
+            Auth::login($user, true);
+
+            if ($user->hasRole('pro')) {
+                return redirect()->route('pro.dashboard');
+            }
+
+            return redirect('/admin');
+        }
+
+        // No existing user — check if there's an approved/invited ProAccount for this email
+        $proAccount = ProAccount::where('email', $googleUser->getEmail())
+            ->whereIn('status', ['approved', 'invited'])
+            ->first();
+
+        if (! $proAccount) {
             return redirect('/')->with('error', 'Aucun compte associé à cet email.');
         }
 
-        if (! $user->google_id) {
-            $user->update([
-                'google_id' => $googleUser->getId(),
-                'avatar' => $googleUser->getAvatar(),
-            ]);
-        }
+        // Create user for the pro
+        $user = User::create([
+            'name' => $proAccount->full_name,
+            'email' => $googleUser->getEmail(),
+            'google_id' => $googleUser->getId(),
+            'avatar' => $googleUser->getAvatar(),
+        ]);
+
+        $user->assignRole('pro');
+
+        // Link and activate the pro account
+        $proAccount->update([
+            'user_id' => $user->id,
+            'status' => 'approved',
+            'approved_at' => $proAccount->approved_at ?? now(),
+        ]);
 
         Auth::login($user, true);
 
-        if ($user->hasRole('pro')) {
-            return redirect('/pro');
-        }
-
-        return redirect('/admin');
+        return redirect()->route('pro.dashboard');
     }
 }

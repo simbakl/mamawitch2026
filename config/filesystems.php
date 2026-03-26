@@ -47,6 +47,20 @@ return [
             'report' => false,
         ],
 
+        'pro-audio' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/pro-audio'),
+            'throw' => true,
+        ],
+
+        'pro-files' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/pro'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage/pro',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
