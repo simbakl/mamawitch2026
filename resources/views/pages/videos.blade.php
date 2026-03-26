@@ -5,7 +5,7 @@
 @section('content')
 <div class="pt-24 pb-20 px-4">
     <div class="max-w-5xl mx-auto">
-        <h1 class="font-display text-4xl md:text-5xl uppercase tracking-wider text-center mb-16">Videos</h1>
+        <h1 class="font-display text-4xl md:text-5xl uppercase tracking-wider text-center mb-16">Vidéos</h1>
 
         <div class="space-y-8">
             @forelse ($videos as $video)
@@ -16,7 +16,7 @@
                 @if ($youtubeId)
                     <div class="bg-mw-dark rounded-lg overflow-hidden border border-white/5">
                         <div class="aspect-video">
-                            <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}" title="{{ $video->title }}" loading="lazy" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
                         </div>
                         <div class="p-4 flex items-center justify-between">
                             <div>
@@ -39,7 +39,7 @@
                     </div>
                 @endif
             @empty
-                <p class="text-center text-gray-500 py-12">Aucune video pour le moment.</p>
+                <p class="text-center text-gray-500 py-12">Aucune vidéo pour le moment.</p>
             @endforelse
         </div>
     </div>

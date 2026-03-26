@@ -13,7 +13,7 @@
                     {{-- Photo --}}
                     <div class="aspect-[3/4] overflow-hidden">
                         @if ($member->photo)
-                            <img src="{{ asset('storage/' . $member->photo) }}" alt="{{ $member->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <img src="{{ asset('storage/' . $member->photo) }}" alt="{{ $member->name }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         @else
                             <div class="w-full h-full bg-mw-gray flex items-center justify-center">
                                 <span class="text-6xl font-display text-gray-600">{{ substr($member->name, 0, 1) }}</span>

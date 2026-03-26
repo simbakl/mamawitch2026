@@ -13,7 +13,7 @@
                     {{-- Cover --}}
                     @if ($release->cover)
                         <div class="flex-shrink-0">
-                            <img src="{{ asset('storage/' . $release->cover) }}" alt="{{ $release->title }}" class="w-48 h-48 object-cover rounded-lg shadow-xl">
+                            <img src="{{ asset('storage/' . $release->cover) }}" alt="{{ $release->title }}" loading="lazy" class="w-48 h-48 object-cover rounded-lg shadow-xl">
                         </div>
                     @endif
 

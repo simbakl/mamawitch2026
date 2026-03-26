@@ -31,7 +31,7 @@
                             @if ($concert->status === 'soldout')
                                 <span class="px-3 py-1 bg-mw-amber/20 text-mw-amber text-xs font-heading uppercase rounded">Complet</span>
                             @elseif ($concert->status === 'cancelled')
-                                <span class="px-3 py-1 bg-red-500/20 text-red-400 text-xs font-heading uppercase rounded line-through">Annule</span>
+                                <span class="px-3 py-1 bg-red-500/20 text-red-400 text-xs font-heading uppercase rounded line-through">Annulé</span>
                             @elseif ($concert->ticket_url)
                                 <a href="{{ $concert->ticket_url }}" target="_blank" class="px-5 py-2 bg-mw-red hover:bg-mw-red-dark text-white text-xs font-heading uppercase tracking-wider rounded transition-colors">
                                     Billets
@@ -42,12 +42,12 @@
                 @endforeach
             </div>
         @else
-            <p class="text-center text-gray-500 mb-16">Aucune date a venir pour le moment. Restez connectes !</p>
+            <p class="text-center text-gray-500 mb-16">Aucune date à venir pour le moment. Restez connectés !</p>
         @endif
 
         {{-- Past --}}
         @if ($past->count())
-            <h2 class="font-heading uppercase text-lg tracking-wider text-gray-500 mb-6">Dates passees</h2>
+            <h2 class="font-heading uppercase text-lg tracking-wider text-gray-500 mb-6">Dates passées</h2>
             <div class="space-y-3 opacity-60">
                 @foreach ($past as $concert)
                     <div class="flex items-center justify-between bg-mw-dark/50 rounded-lg p-4 border border-white/5">
@@ -61,7 +61,7 @@
                                 <p class="text-gray-500 text-sm">{{ $concert->venue }} — {{ $concert->city }}</p>
                             </div>
                         </div>
-                        <span class="text-xs text-gray-600 font-heading uppercase">Passe</span>
+                        <span class="text-xs text-gray-600 font-heading uppercase">Passé</span>
                     </div>
                 @endforeach
             </div>

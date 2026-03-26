@@ -21,7 +21,7 @@
 
         {{-- Featured image --}}
         @if ($article->featured_image)
-            <img src="{{ asset('storage/' . $article->featured_image) }}" alt="{{ $article->title }}" class="w-full rounded-lg mb-8">
+            <img src="{{ asset('storage/' . $article->featured_image) }}" alt="{{ $article->title }}" loading="lazy" class="w-full rounded-lg mb-8">
         @endif
 
         {{-- Excerpt --}}
@@ -42,7 +42,7 @@
             @endphp
             @if ($youtubeId)
                 <div class="mt-8 aspect-video rounded-lg overflow-hidden">
-                    <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}" title="{{ $article->title }}" loading="lazy" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
                 </div>
             @endif
         @endif

@@ -3,7 +3,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             {{-- Logo + tagline --}}
             <div>
-                <img src="{{ asset('images/logo-white.png') }}" alt="Mama Witch" class="h-10 mb-4">
+                <img src="{{ asset('images/logo-white.png') }}" alt="Mama Witch" loading="lazy" class="h-10 mb-4">
                 <p class="text-gray-500 text-sm">Hard Rock - Paris, France</p>
             </div>
 
@@ -50,7 +50,7 @@
 
         {{-- Bottom bar --}}
         <div class="mt-10 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
-            <p>&copy; {{ date('Y') }} Mama Witch. Tous droits reserves.</p>
+            <p>&copy; {{ date('Y') }} Mama Witch. Tous droits réservés.</p>
             <div class="flex space-x-4 mt-2 md:mt-0">
                 @foreach (App\Models\StaticPage::inFooter()->get() as $legalPage)
                     <a href="{{ url('/' . $legalPage->slug) }}" class="hover:text-gray-400 transition-colors">{{ $legalPage->title }}</a>

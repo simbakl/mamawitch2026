@@ -11,7 +11,7 @@
             @forelse ($galleries as $gallery)
                 <a href="{{ route('gallery.show', $gallery->slug) }}" class="group relative aspect-square rounded-lg overflow-hidden">
                     @if ($gallery->photos->first())
-                        <img src="{{ asset('storage/' . $gallery->photos->first()->image) }}" alt="{{ $gallery->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <img src="{{ asset('storage/' . $gallery->photos->first()->image) }}" alt="{{ $gallery->title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     @else
                         <div class="w-full h-full bg-mw-gray"></div>
                     @endif

@@ -5,7 +5,7 @@
 @section('content')
 <div class="pt-24 pb-20 px-4">
     <div class="max-w-6xl mx-auto">
-        <h1 class="font-display text-4xl md:text-5xl uppercase tracking-wider text-center mb-8">Actualites</h1>
+        <h1 class="font-display text-4xl md:text-5xl uppercase tracking-wider text-center mb-8">Actualités</h1>
 
         {{-- Categories filter --}}
         <div class="flex flex-wrap justify-center gap-2 mb-12">
@@ -29,7 +29,7 @@
                 <article class="bg-mw-dark rounded-lg overflow-hidden border border-white/5 hover:border-mw-red/30 transition-colors group">
                     @if ($article->featured_image)
                         <div class="aspect-video overflow-hidden">
-                            <img src="{{ asset('storage/' . $article->featured_image) }}" alt="{{ $article->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <img src="{{ asset('storage/' . $article->featured_image) }}" alt="{{ $article->title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         </div>
                     @endif
                     <div class="p-5">
@@ -49,7 +49,7 @@
                     </div>
                 </article>
             @empty
-                <div class="col-span-3 text-center text-gray-500 py-12">Aucune actualite pour le moment.</div>
+                <div class="col-span-3 text-center text-gray-500 py-12">Aucune actualité pour le moment.</div>
             @endforelse
         </div>
 

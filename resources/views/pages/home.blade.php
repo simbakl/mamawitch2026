@@ -6,9 +6,9 @@
 <section class="relative h-screen flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0">
         @if ($hero['image'])
-            <img src="{{ asset('storage/' . $hero['image']) }}" alt="" class="w-full h-full object-cover">
+            <img src="{{ asset('storage/' . $hero['image']) }}" alt="Mama Witch - Hard Rock Paris" class="w-full h-full object-cover">
         @else
-            <img src="{{ asset('images/hero-bg.jpg') }}" alt="" class="w-full h-full object-cover">
+            <img src="{{ asset('images/hero-bg.jpg') }}" alt="Mama Witch - Hard Rock Paris" class="w-full h-full object-cover">
         @endif
         <div class="absolute inset-0 bg-gradient-to-b from-mw-black/60 via-mw-black/40 to-mw-black"></div>
     </div>
@@ -58,7 +58,7 @@
                         @if ($concert->status === 'soldout')
                             <span class="px-3 py-1 bg-mw-amber/20 text-mw-amber text-xs font-heading uppercase rounded">Complet</span>
                         @elseif ($concert->status === 'cancelled')
-                            <span class="px-3 py-1 bg-red-500/20 text-red-400 text-xs font-heading uppercase rounded">Annule</span>
+                            <span class="px-3 py-1 bg-red-500/20 text-red-400 text-xs font-heading uppercase rounded">Annulé</span>
                         @elseif ($concert->ticket_url)
                             <a href="{{ $concert->ticket_url }}" target="_blank" class="px-4 py-1.5 bg-mw-red hover:bg-mw-red-dark text-white text-xs font-heading uppercase tracking-wider rounded transition-colors">
                                 Billets
@@ -82,14 +82,14 @@
 @if ($news->count())
 <section class="py-20 px-4 bg-mw-dark">
     <div class="max-w-6xl mx-auto">
-        <h2 class="font-display text-3xl md:text-4xl uppercase tracking-wider text-center mb-12">Actualites</h2>
+        <h2 class="font-display text-3xl md:text-4xl uppercase tracking-wider text-center mb-12">Actualités</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             @foreach ($news as $article)
                 <article class="bg-mw-black rounded-lg overflow-hidden border border-white/5 hover:border-mw-red/30 transition-colors group">
                     @if ($article->featured_image)
                         <div class="aspect-video overflow-hidden">
-                            <img src="{{ asset('storage/' . $article->featured_image) }}" alt="{{ $article->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <img src="{{ asset('storage/' . $article->featured_image) }}" alt="{{ $article->title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         </div>
                     @endif
                     <div class="p-5">
@@ -121,11 +121,11 @@
 @if ($latestRelease)
 <section class="py-20 px-4">
     <div class="max-w-4xl mx-auto">
-        <h2 class="font-display text-3xl md:text-4xl uppercase tracking-wider text-center mb-12">Derniere Sortie</h2>
+        <h2 class="font-display text-3xl md:text-4xl uppercase tracking-wider text-center mb-12">Dernière Sortie</h2>
 
         <div class="flex flex-col md:flex-row items-center gap-8">
             @if ($latestRelease->cover)
-                <img src="{{ asset('storage/' . $latestRelease->cover) }}" alt="{{ $latestRelease->title }}" class="w-64 h-64 object-cover rounded-lg shadow-2xl">
+                <img src="{{ asset('storage/' . $latestRelease->cover) }}" alt="{{ $latestRelease->title }}" loading="lazy" class="w-64 h-64 object-cover rounded-lg shadow-2xl">
             @endif
             <div class="text-center md:text-left">
                 <span class="text-mw-red text-xs font-heading uppercase tracking-wider">{{ strtoupper($latestRelease->type) }}</span>

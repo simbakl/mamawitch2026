@@ -10,12 +10,12 @@
 <div class="pt-24 pb-20 px-4">
     <div class="max-w-4xl mx-auto">
         <a href="{{ route('discography') }}" class="text-gray-400 hover:text-white font-heading uppercase text-sm tracking-wider transition-colors">
-            &larr; Retour a la discographie
+            &larr; Retour à la discographie
         </a>
 
         <div class="flex flex-col md:flex-row gap-8 mt-6">
             @if ($release->cover)
-                <img src="{{ asset('storage/' . $release->cover) }}" alt="{{ $release->title }}" class="w-64 h-64 object-cover rounded-lg shadow-2xl flex-shrink-0">
+                <img src="{{ asset('storage/' . $release->cover) }}" alt="{{ $release->title }}" loading="lazy" class="w-64 h-64 object-cover rounded-lg shadow-2xl flex-shrink-0">
             @endif
             <div>
                 <span class="px-2 py-0.5 text-xs font-heading uppercase rounded {{ match($release->type) { 'album' => 'bg-red-500/20 text-red-400', 'ep' => 'bg-amber-500/20 text-amber-400', default => 'bg-blue-500/20 text-blue-400' } }}">
@@ -47,14 +47,14 @@
         {{-- Player embed --}}
         @if ($release->player_embed_url)
             <div class="mt-8">
-                <iframe src="{{ $release->player_embed_url }}" class="w-full h-[380px] rounded-lg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe src="{{ $release->player_embed_url }}" title="{{ $release->title }}" loading="lazy" class="w-full h-[380px] rounded-lg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
         @endif
 
         {{-- Description --}}
         @if ($release->description)
             <div class="mt-8">
-                <h2 class="font-heading uppercase text-lg tracking-wider text-gray-400 mb-3">A propos</h2>
+                <h2 class="font-heading uppercase text-lg tracking-wider text-gray-400 mb-3">À propos</h2>
                 <p class="text-gray-300 leading-relaxed">{{ $release->description }}</p>
             </div>
         @endif
@@ -79,7 +79,7 @@
         {{-- Credits --}}
         @if ($release->credits)
             <div class="mt-8">
-                <h2 class="font-heading uppercase text-lg tracking-wider text-gray-400 mb-3">Credits</h2>
+                <h2 class="font-heading uppercase text-lg tracking-wider text-gray-400 mb-3">Crédits</h2>
                 <p class="text-gray-400 text-sm whitespace-pre-line">{{ $release->credits }}</p>
             </div>
         @endif
