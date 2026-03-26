@@ -5,7 +5,30 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+/* Diamante ExtraBold - Titres */
+@font-face {
+    font-family: 'Diamante';
+    src: url('/fonts/diamante-extrabold-webfont.woff2') format('woff2'),
+         url('/fonts/diamante-extrabold-webfont.woff') format('woff');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Google Fonts - Oswald + Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap');
+
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-heading: 'Oswald', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Diamante', 'Oswald', ui-sans-serif, system-ui, sans-serif;
+
+    --color-mw-black: #0a0a0a;
+    --color-mw-dark: #111111;
+    --color-mw-darker: #1a1a1a;
+    --color-mw-gray: #2a2a2a;
+    --color-mw-red: #c41e3a;
+    --color-mw-red-dark: #8b0000;
+    --color-mw-amber: #d4a017;
+    --color-mw-purple: #6b21a8;
 }
