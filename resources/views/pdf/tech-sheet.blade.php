@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mama Witch - Fiche Technique</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 11px; color: #1a1a1a; line-height: 1.5; }
+
+        .header { background: #1a1a1a; color: white; padding: 30px; text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 28px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; }
+        .header p { font-size: 12px; color: #999; }
+
+        .section { margin: 0 25px 20px; }
+        .section-title { font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #1a1a1a; padding-bottom: 5px; margin-bottom: 10px; }
+
+        .member-block { margin-bottom: 15px; page-break-inside: avoid; }
+        .member-name { font-size: 13px; font-weight: bold; background: #f0f0f0; padding: 5px 10px; margin-bottom: 5px; }
+        .member-instruments { font-size: 11px; color: #666; font-style: italic; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        table th { background: #e0e0e0; text-align: left; padding: 4px 8px; font-size: 10px; text-transform: uppercase; }
+        table td { padding: 4px 8px; border-bottom: 1px solid #eee; font-size: 11px; }
+        table .category { font-weight: bold; font-size: 10px; color: #666; text-transform: uppercase; }
+
+        .requirements { margin-top: 5px; }
+        .req-item { margin-bottom: 3px; }
+        .req-label { font-weight: bold; color: #444; }
+
+        .global-info { display: table; width: 100%; }
+        .global-col { display: table-cell; width: 33%; padding: 5px; vertical-align: top; }
+        .global-col strong { display: block; font-size: 10px; color: #666; text-transform: uppercase; margin-bottom: 2px; }
+
+        .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 9px; color: #999; padding: 10px; border-top: 1px solid #ddd; }
+        .contact { font-size: 10px; color: #666; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>MAMA WITCH</h1>
+        <p>FICHE TECHNIQUE</p>
+        <p class="contact" style="margin-top: 10px;">contact@mamawitch.fr &bull; mamawitch.fr</p>
+    </div>
+
+    {{-- LINE-UP --}}
+    <div class="section">
+        <div class="section-title">Line-up</div>
+        <table>
+            <tr>
+                <th>Nom</th>
+                <th>Instrument(s)</th>
+            </tr>
+            @foreach ($members as $member)
+                <tr>
+                    <td><strong>{{ $member->name }}</strong></td>
+                    <td>{{ $member->instruments }}</td>
+                </tr>
+            @endforeach
+        </table>
+    </div>
+
+    {{-- TIMING --}}
+    @if ($global['setup_time'] || $global['soundcheck_time'] || $global['teardown_time'])
+        <div class="section">
+            <div class="section-title">Timing</div>
+            <div class="global-info">
+                @if ($global['setup_time'])
+                    <div class="global-col"><strong>Montage</strong> {{ $global['setup_time'] }}</div>
+                @endif
+                @if ($global['soundcheck_time'])
+                    <div class="global-col"><strong>Balance</strong> {{ $global['soundcheck_time'] }}</div>
+                @endif
+                @if ($global['teardown_time'])
+                    <div class="global-col"><strong>Demontage</strong> {{ $global['teardown_time'] }}</div>
+                @endif
+            </div>
+        </div>
+    @endif
+
+    {{-- EQUIPMENT PER MEMBER --}}
+    <div class="section">
+        <div class="section-title">Materiel du groupe (backline)</div>
+
+        @foreach ($members as $member)
+            @if ($member->equipment->count())
+                <div class="member-block">
+                    <div class="member-name">
+                        {{ $member->name }}
+                        <span class="member-instruments">{{ $member->instruments }}</span>
+                    </div>
+                    <table>
+                        <tr>
+                            <th style="width: 120px;">Type</th>
+                            <th>Element</th>
+                            <th>Notes</th>
+                        </tr>
+                        @foreach ($member->equipment as $item)
+                            <tr>
+                                <td class="category">{{ $item->category_label }}</td>
+                                <td>{{ $item->name }}</td>
+                                <td style="color: #666;">{{ $item->notes ?? '-' }}</td>
+                            </tr>
+                        @endforeach
+                    </table>
+                </div>
+            @endif
+        @endforeach
+    </div>
+
+    {{-- TECHNICAL REQUIREMENTS --}}
+    <div class="section">
+        <div class="section-title">Besoins techniques (a fournir par la salle)</div>
+
+        @foreach ($members as $member)
+            @if ($member->techRequirement)
+                @php $req = $member->techRequirement; @endphp
+                @if ($req->monitors || $req->microphones || $req->power || $req->monitoring || $req->other)
+                    <div class="member-block">
+                        <div class="member-name">
+                            {{ $member->name }}
+                            <span class="member-instruments">{{ $member->instruments }}</span>
+                        </div>
+                        <div class="requirements" style="padding: 5px 10px;">
+                            @if ($req->monitors)
+                                <div class="req-item"><span class="req-label">Retours :</span> {{ $req->monitors }}</div>
+                            @endif
+                            @if ($req->microphones)
+                                <div class="req-item"><span class="req-label">Micros / DI :</span> {{ $req->microphones }}</div>
+                            @endif
+                            @if ($req->power)
+                                <div class="req-item"><span class="req-label">Electricite :</span> {{ $req->power }}</div>
+                            @endif
+                            @if ($req->monitoring)
+                                <div class="req-item"><span class="req-label">Monitoring :</span> {{ $req->monitoring }}</div>
+                            @endif
+                            @if ($req->other)
+                                <div class="req-item"><span class="req-label">Divers :</span> {{ $req->other }}</div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+            @endif
+        @endforeach
+
+        {{-- Global requirements --}}
+        @if ($global['global_monitors'] || $global['global_other'])
+            <div class="member-block">
+                <div class="member-name">Besoins globaux</div>
+                <div class="requirements" style="padding: 5px 10px;">
+                    @if ($global['global_monitors'])
+                        <div class="req-item"><span class="req-label">Sono / Retours :</span> {{ $global['global_monitors'] }}</div>
+                    @endif
+                    @if ($global['global_other'])
+                        <div class="req-item"><span class="req-label">Divers :</span> {{ $global['global_other'] }}</div>
+                    @endif
+                </div>
+            </div>
+        @endif
+    </div>
+
+    {{-- NOTES --}}
+    @if ($global['global_notes'])
+        <div class="section">
+            <div class="section-title">Notes complementaires</div>
+            <p style="padding: 5px;">{{ $global['global_notes'] }}</p>
+        </div>
+    @endif
+
+    <div class="footer">
+        MAMA WITCH - Fiche Technique - Generee le {{ now()->format('d/m/Y') }} - contact@mamawitch.fr
+    </div>
+
+</body>
+</html>
