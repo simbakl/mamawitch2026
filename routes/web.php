@@ -61,6 +61,7 @@ Route::get('/pro/audio/{track}', [ProAudioController::class, 'stream'])
     ->name('pro.audio.stream');
 
 // Auth
+Route::get('/login', fn () => redirect('/admin/login'))->name('login');
 Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
 Route::post('/logout', function () {
