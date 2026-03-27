@@ -27,7 +27,7 @@
     </div>
 
     {{-- Google SSO Button --}}
-    <a href="http://localhost/auth/google"
+    <a href="{{ url('/auth/google') }}"
        class="flex items-center justify-center gap-3 w-full px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-gray-700 hover:border-gray-500 rounded-lg transition-colors">
         <svg class="w-5 h-5" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
