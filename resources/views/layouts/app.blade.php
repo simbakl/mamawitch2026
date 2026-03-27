@@ -6,6 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Mama Witch') - Hard Rock Paris</title>
+    @if (str_contains(config('app.url'), 'preprod'))
+        <meta name="robots" content="noindex, nofollow">
+    @endif
     <meta name="description" content="@yield('meta_description', $defaultMetaDescription)">
     <link rel="canonical" href="@yield('canonical', url()->current())">
 

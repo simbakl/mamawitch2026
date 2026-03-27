@@ -11,8 +11,18 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TechSheetPdfController;
 use Illuminate\Support\Facades\Route;
 
-// Sitemap
+// Sitemap & robots.txt
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', function () {
+    // Block all crawlers on non-production environments
+    if (app()->environment('production') && ! str_contains(config('app.url'), 'preprod')) {
+        $content = "User-agent: *\nAllow: /\n\nDisallow: /admin\nDisallow: /pro\nDisallow: /auth\nDisallow: /livewire\nDisallow: /tech-sheet\nDisallow: /deploy\n\nSitemap: " . url('/sitemap.xml');
+    } else {
+        $content = "User-agent: *\nDisallow: /";
+    }
+
+    return response($content, 200)->header('Content-Type', 'text/plain');
+});
 
 // Public pages
 Route::get('/', [PageController::class, 'home'])->name('home');
