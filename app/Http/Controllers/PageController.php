@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filament\Pages\PageManager;
 use App\Models\Concert;
 use App\Models\ContactMessage;
 use App\Models\Gallery;
@@ -18,17 +19,28 @@ class PageController extends Controller
 {
     public function home()
     {
+        // Batch-load hero settings in a single query
+        $heroSettings = SiteSetting::getMany([
+            'hero_image', 'hero_title', 'hero_subtitle', 'hero_cta_text', 'hero_cta_url',
+        ]);
+
         return view('pages.home', [
             'hero' => [
-                'image' => SiteSetting::get('hero_image'),
-                'title' => SiteSetting::get('hero_title', 'Mama Witch'),
-                'subtitle' => SiteSetting::get('hero_subtitle'),
-                'cta_text' => SiteSetting::get('hero_cta_text'),
-                'cta_url' => SiteSetting::get('hero_cta_url'),
+                'image' => $heroSettings['hero_image'],
+                'title' => $heroSettings['hero_title'] ?? 'Mama Witch',
+                'subtitle' => $heroSettings['hero_subtitle'],
+                'cta_text' => $heroSettings['hero_cta_text'],
+                'cta_url' => $heroSettings['hero_cta_url'],
             ],
-            'concerts' => Concert::published()->upcoming()->orderBy('date')->take(3)->get(),
-            'news' => News::latestPublished()->take(3)->get(),
-            'latestRelease' => Release::published()->orderByDesc('release_date')->first(),
+            'concerts' => PageManager::isPageActive('concerts')
+                ? Concert::published()->upcoming()->orderBy('date')->take(3)->get()
+                : collect(),
+            'news' => PageManager::isPageActive('actus')
+                ? News::latestPublished()->with('category')->take(3)->get()
+                : collect(),
+            'latestRelease' => PageManager::isPageActive('discographie')
+                ? Release::published()->orderByDesc('release_date')->first()
+                : null,
         ]);
     }
 
@@ -42,7 +54,7 @@ class PageController extends Controller
 
     public function newsIndex()
     {
-        $news = News::latestPublished()->paginate(9);
+        $news = News::latestPublished()->with('category')->paginate(9);
         $categories = NewsCategory::withCount('news')->get();
 
         return view('pages.news.index', compact('news', 'categories'));
@@ -58,7 +70,7 @@ class PageController extends Controller
     public function newsByCategory(string $slug)
     {
         $category = NewsCategory::where('slug', $slug)->firstOrFail();
-        $news = News::where('news_category_id', $category->id)->latestPublished()->paginate(9);
+        $news = News::where('news_category_id', $category->id)->latestPublished()->with('category')->paginate(9);
         $categories = NewsCategory::withCount('news')->get();
 
         return view('pages.news.index', compact('news', 'categories', 'category'));
@@ -75,6 +87,7 @@ class PageController extends Controller
     {
         $galleries = Gallery::where('is_published', true)
             ->withCount('photos')
+            ->with(['photos' => fn ($q) => $q->orderBy('sort_order')->limit(1)])
             ->orderByDesc('date')
             ->get();
 

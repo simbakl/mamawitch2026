@@ -8,19 +8,6 @@
 
             {{-- Desktop Menu --}}
             <div class="hidden md:flex items-center space-x-1">
-                @php
-                    $navItems = [
-                        ['route' => 'home', 'label' => 'Accueil'],
-                        ['route' => 'concerts', 'label' => 'Concerts'],
-                        ['route' => 'news.index', 'label' => 'Actus'],
-                        ['route' => 'band', 'label' => 'Le Groupe'],
-                        ['route' => 'gallery.index', 'label' => 'Galerie'],
-                        ['route' => 'videos', 'label' => 'Vidéos'],
-                        ['route' => 'discography', 'label' => 'Discographie'],
-                        ['route' => 'contact', 'label' => 'Contact'],
-                    ];
-                @endphp
-
                 @foreach ($navItems as $item)
                     <a href="{{ route($item['route']) }}"
                        class="px-3 py-2 text-sm font-heading uppercase tracking-wider transition-colors duration-200
@@ -29,7 +16,7 @@
                     </a>
                 @endforeach
 
-                @foreach (App\Models\StaticPage::inMenu()->get() as $menuPage)
+                @foreach ($staticMenuPages as $menuPage)
                     <a href="{{ url('/' . $menuPage->slug) }}"
                        class="px-3 py-2 text-sm font-heading uppercase tracking-wider transition-colors duration-200
                               {{ request()->is($menuPage->slug) ? 'text-mw-red' : 'text-gray-300 hover:text-white' }}">
@@ -37,10 +24,12 @@
                     </a>
                 @endforeach
 
-                <a href="{{ auth()->check() && auth()->user()->hasRole('pro') ? route('pro.dashboard') : route('pro.request') }}"
-                   class="ml-4 px-4 py-1.5 text-xs font-heading uppercase tracking-wider border border-mw-red text-mw-red hover:bg-mw-red hover:text-white transition-all duration-200 rounded">
-                    Espace Pro
-                </a>
+                @if ($isProActive)
+                    <a href="{{ auth()->check() && auth()->user()->hasRole('pro') ? route('pro.dashboard') : route('pro.request') }}"
+                       class="ml-4 px-4 py-1.5 text-xs font-heading uppercase tracking-wider border border-mw-red text-mw-red hover:bg-mw-red hover:text-white transition-all duration-200 rounded">
+                        Espace Pro
+                    </a>
+                @endif
             </div>
 
             {{-- Mobile menu button --}}
@@ -65,17 +54,19 @@
                     {{ $item['label'] }}
                 </a>
             @endforeach
-            @foreach (App\Models\StaticPage::inMenu()->get() as $menuPage)
+            @foreach ($staticMenuPages as $menuPage)
                 <a href="{{ url('/' . $menuPage->slug) }}"
                    class="block px-3 py-2 font-heading uppercase tracking-wider text-sm
                           {{ request()->is($menuPage->slug) ? 'text-mw-red' : 'text-gray-300 hover:text-white' }}">
                     {{ $menuPage->title }}
                 </a>
             @endforeach
-            <a href="{{ auth()->check() && auth()->user()->hasRole('pro') ? route('pro.dashboard') : route('pro.request') }}"
-               class="block px-3 py-2 font-heading uppercase tracking-wider text-sm text-mw-red">
-                Espace Pro
-            </a>
+            @if ($isProActive)
+                <a href="{{ auth()->check() && auth()->user()->hasRole('pro') ? route('pro.dashboard') : route('pro.request') }}"
+                   class="block px-3 py-2 font-heading uppercase tracking-wider text-sm text-mw-red">
+                    Espace Pro
+                </a>
+            @endif
         </div>
     </div>
 </nav>

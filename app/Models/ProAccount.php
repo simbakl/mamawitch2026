@@ -5,9 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Cache;
 
 class ProAccount extends Model
 {
+    protected static function booted(): void
+    {
+        static::created(fn () => Cache::forget('nav_badge_pending_pro'));
+        static::updated(fn () => Cache::forget('nav_badge_pending_pro'));
+    }
+
     protected $fillable = [
         'user_id', 'pro_type_id', 'first_name', 'last_name', 'email',
         'structure', 'message', 'status', 'invitation_token',

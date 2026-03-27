@@ -23,12 +23,17 @@ class ProAccessMatrix extends Page
 
     public array $matrix = [];
 
+    protected $proTypesCache = null;
+
+    protected $contentTypesCache = null;
+
     public function mount(): void
     {
-        $proTypes = ProType::orderBy('sort_order')->get();
+        // Single query with eager-loaded pivot instead of N+1
+        $proTypes = ProType::with('contentTypes')->orderBy('sort_order')->get();
 
         foreach ($proTypes as $proType) {
-            $this->matrix[$proType->id] = $proType->contentTypes()->pluck('pro_content_types.id')->toArray();
+            $this->matrix[$proType->id] = $proType->contentTypes->pluck('id')->toArray();
         }
     }
 
@@ -36,19 +41,19 @@ class ProAccessMatrix extends Page
     {
         $proType = ProType::findOrFail($proTypeId);
 
-        if ($proType->contentTypes()->where('pro_content_types.id', $contentTypeId)->exists()) {
+        if (in_array($contentTypeId, $this->matrix[$proTypeId] ?? [])) {
             $proType->contentTypes()->detach($contentTypeId);
-
-            if (isset($this->matrix[$proTypeId])) {
-                $this->matrix[$proTypeId] = array_values(
-                    array_diff($this->matrix[$proTypeId], [$contentTypeId])
-                );
-            }
+            $this->matrix[$proTypeId] = array_values(
+                array_diff($this->matrix[$proTypeId], [$contentTypeId])
+            );
         } else {
             $proType->contentTypes()->attach($contentTypeId);
-
             $this->matrix[$proTypeId][] = $contentTypeId;
         }
+
+        // Reset cached collections
+        $this->proTypesCache = null;
+        $this->contentTypesCache = null;
 
         Notification::make()
             ->success()
@@ -59,12 +64,12 @@ class ProAccessMatrix extends Page
 
     public function getProTypes()
     {
-        return ProType::orderBy('sort_order')->get();
+        return $this->proTypesCache ??= ProType::orderBy('sort_order')->get();
     }
 
     public function getContentTypes()
     {
-        return ProContentType::orderBy('sort_order')->get();
+        return $this->contentTypesCache ??= ProContentType::orderBy('sort_order')->get();
     }
 
     public static function canAccess(): bool

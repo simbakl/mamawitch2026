@@ -28,11 +28,19 @@ class ProAccountResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Comptes pro';
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with('proType');
+    }
+
     protected static ?int $navigationSort = 3;
 
     public static function getNavigationBadge(): ?string
     {
-        $count = ProAccount::pending()->count();
+        $count = cache()->remember('nav_badge_pending_pro', 60, function () {
+            return ProAccount::pending()->count();
+        });
+
         return $count > 0 ? (string) $count : null;
     }
 

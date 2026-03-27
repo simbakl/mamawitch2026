@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class StaticPage extends Model
@@ -25,6 +26,16 @@ class StaticPage extends Model
                 $page->slug = Str::slug($page->title);
             }
         });
+
+        // Invalidate cached menu/footer queries on any change
+        static::saved(fn () => static::clearNavigationCache());
+        static::deleted(fn () => static::clearNavigationCache());
+    }
+
+    public static function clearNavigationCache(): void
+    {
+        Cache::forget('static_pages_menu');
+        Cache::forget('static_pages_footer');
     }
 
     public function scopePublished($query)

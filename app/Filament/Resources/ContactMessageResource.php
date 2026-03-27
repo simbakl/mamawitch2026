@@ -26,7 +26,9 @@ class ContactMessageResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $count = ContactMessage::unread()->count();
+        $count = cache()->remember('nav_badge_unread_messages', 60, function () {
+            return ContactMessage::unread()->count();
+        });
 
         return $count > 0 ? (string) $count : null;
     }

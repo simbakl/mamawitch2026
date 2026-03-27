@@ -16,7 +16,7 @@ class EnsureProAccess
             return redirect()->route('pro.request');
         }
 
-        $proAccount = $user->proAccount;
+        $proAccount = $user->loadMissing('proAccount')->proAccount;
 
         if (! $proAccount || $proAccount->status !== 'approved') {
             auth()->logout();

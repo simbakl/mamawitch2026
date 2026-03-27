@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filament\Pages\PageManager;
 use App\Models\Concert;
 use App\Models\Gallery;
 use App\Models\News;
@@ -15,57 +16,71 @@ class SitemapController extends Controller
     {
         $urls = collect();
 
-        // Static routes
-        $urls->push(['url' => url('/'), 'priority' => '1.0', 'changefreq' => 'weekly']);
-        $urls->push(['url' => route('concerts'), 'priority' => '0.8', 'changefreq' => 'weekly']);
-        $urls->push(['url' => route('news.index'), 'priority' => '0.8', 'changefreq' => 'daily']);
-        $urls->push(['url' => route('band'), 'priority' => '0.7', 'changefreq' => 'monthly']);
-        $urls->push(['url' => route('gallery.index'), 'priority' => '0.6', 'changefreq' => 'monthly']);
-        $urls->push(['url' => route('videos'), 'priority' => '0.6', 'changefreq' => 'monthly']);
-        $urls->push(['url' => route('discography'), 'priority' => '0.7', 'changefreq' => 'monthly']);
-        $urls->push(['url' => route('contact'), 'priority' => '0.5', 'changefreq' => 'yearly']);
-
-        // News articles
-        News::visible()->latest('published_at')->get()->each(function ($article) use ($urls) {
-            if ($article->hasDetailPage()) {
-                $urls->push([
-                    'url' => route('news.show', $article->slug),
-                    'lastmod' => $article->updated_at->toW3cString(),
-                    'priority' => '0.6',
-                    'changefreq' => 'monthly',
-                ]);
-            }
-        });
-
-        // Galleries
-        Gallery::where('is_published', true)->get()->each(function ($gallery) use ($urls) {
+        // Fixed pages — only include active ones
+        foreach (PageManager::getActivePages() as $slug => $def) {
             $urls->push([
-                'url' => route('gallery.show', $gallery->slug),
-                'lastmod' => $gallery->updated_at->toW3cString(),
-                'priority' => '0.5',
-                'changefreq' => 'monthly',
+                'url' => $slug === 'home' ? url('/') : route($def['route']),
+                'priority' => $def['priority'],
+                'changefreq' => $def['changefreq'],
             ]);
-        });
+        }
 
-        // Releases
-        Release::where('is_published', true)->get()->each(function ($release) use ($urls) {
-            $urls->push([
-                'url' => route('release.show', $release->slug),
-                'lastmod' => $release->updated_at->toW3cString(),
-                'priority' => '0.6',
-                'changefreq' => 'yearly',
-            ]);
-        });
+        // News articles (only if actus page is active) — select only needed columns
+        if (PageManager::isPageActive('actus')) {
+            News::visible()
+                ->select('slug', 'body', 'published_at', 'updated_at')
+                ->latest('published_at')
+                ->each(function ($article) use ($urls) {
+                    if ($article->hasDetailPage()) {
+                        $urls->push([
+                            'url' => route('news.show', $article->slug),
+                            'lastmod' => $article->updated_at->toW3cString(),
+                            'priority' => '0.6',
+                            'changefreq' => 'monthly',
+                        ]);
+                    }
+                });
+        }
+
+        // Galleries (only if galerie page is active)
+        if (PageManager::isPageActive('galerie')) {
+            Gallery::where('is_published', true)
+                ->select('slug', 'updated_at')
+                ->each(function ($gallery) use ($urls) {
+                    $urls->push([
+                        'url' => route('gallery.show', $gallery->slug),
+                        'lastmod' => $gallery->updated_at->toW3cString(),
+                        'priority' => '0.5',
+                        'changefreq' => 'monthly',
+                    ]);
+                });
+        }
+
+        // Releases (only if discographie page is active)
+        if (PageManager::isPageActive('discographie')) {
+            Release::where('is_published', true)
+                ->select('slug', 'updated_at')
+                ->each(function ($release) use ($urls) {
+                    $urls->push([
+                        'url' => route('release.show', $release->slug),
+                        'lastmod' => $release->updated_at->toW3cString(),
+                        'priority' => '0.6',
+                        'changefreq' => 'yearly',
+                    ]);
+                });
+        }
 
         // Static pages
-        StaticPage::published()->get()->each(function ($page) use ($urls) {
-            $urls->push([
-                'url' => url('/' . $page->slug),
-                'lastmod' => $page->updated_at->toW3cString(),
-                'priority' => '0.3',
-                'changefreq' => 'yearly',
-            ]);
-        });
+        StaticPage::published()
+            ->select('slug', 'updated_at')
+            ->each(function ($page) use ($urls) {
+                $urls->push([
+                    'url' => url('/' . $page->slug),
+                    'lastmod' => $page->updated_at->toW3cString(),
+                    'priority' => '0.3',
+                    'changefreq' => 'yearly',
+                ]);
+            });
 
         $content = view('sitemap', ['urls' => $urls])->render();
 
