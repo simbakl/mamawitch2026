@@ -27,11 +27,10 @@ if (! is_file($fullPath)) {
 
 // Check if file is in a protected directory
 if (str_starts_with($path, 'pro/')) {
-    // Boot Laravel minimally for auth check
+    // Boot Laravel for auth check
     require __DIR__ . '/../vendor/autoload.php';
     $app = require_once __DIR__ . '/../bootstrap/app.php';
 
-    // Bootstrap the application (config, providers, etc.)
     $app->bootstrapWith([
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
         \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
@@ -41,24 +40,25 @@ if (str_starts_with($path, 'pro/')) {
         \Illuminate\Foundation\Bootstrap\BootProviders::class,
     ]);
 
-    // Start session manually to read auth cookie
-    $sessionConfig = config('session');
-    $cookieName = $sessionConfig['cookie'] ?? config('app.name') . '_session';
-
-    $sessionId = $_COOKIE[$cookieName] ?? null;
+    // Decrypt session cookie and find user
     $user = null;
+    $cookieName = config('session.cookie', 'laravel_session');
+    $encryptedSessionId = $_COOKIE[$cookieName] ?? null;
 
-    if ($sessionId) {
-        // Read session from database
-        $session = \Illuminate\Support\Facades\DB::table('sessions')
-            ->where('id', $sessionId)
-            ->first();
+    if ($encryptedSessionId) {
+        try {
+            $sessionId = \Illuminate\Support\Facades\Crypt::decryptString(
+                $encryptedSessionId
+            );
+            $session = \Illuminate\Support\Facades\DB::table('sessions')
+                ->where('id', $sessionId)
+                ->first();
 
-        if ($session) {
-            $userId = $session->user_id;
-            if ($userId) {
-                $user = \App\Models\User::with('roles')->find($userId);
+            if ($session && $session->user_id) {
+                $user = \App\Models\User::with('roles')->find($session->user_id);
             }
+        } catch (\Throwable $e) {
+            // Decryption failed — not authenticated
         }
     }
 
@@ -66,7 +66,7 @@ if (str_starts_with($path, 'pro/')) {
     if ($user && $user->hasRole('admin')) {
         // OK — serve file
     } elseif ($user && $user->hasRole('pro')) {
-        $proAccount = $user->proAccount;
+        $proAccount = $user->loadMissing('proAccount')->proAccount;
         if (! $proAccount || $proAccount->status !== 'approved') {
             http_response_code(403);
             exit;
