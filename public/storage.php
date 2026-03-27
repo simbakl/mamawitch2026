@@ -47,9 +47,12 @@ if (str_starts_with($path, 'pro/')) {
 
     if ($encryptedSessionId) {
         try {
-            $sessionId = \Illuminate\Support\Facades\Crypt::decryptString(
+            $decrypted = \Illuminate\Support\Facades\Crypt::decryptString(
                 $encryptedSessionId
             );
+            // Laravel prefixes session ID with HMAC hash + pipe separator
+            $sessionId = str_contains($decrypted, '|') ? explode('|', $decrypted, 2)[1] : $decrypted;
+
             $session = \Illuminate\Support\Facades\DB::table('sessions')
                 ->where('id', $sessionId)
                 ->first();
