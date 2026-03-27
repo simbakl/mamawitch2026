@@ -27,13 +27,40 @@ if (! is_file($fullPath)) {
 
 // Check if file is in a protected directory
 if (str_starts_with($path, 'pro/')) {
-    // Boot Laravel for auth + access matrix check
+    // Boot Laravel minimally for auth check
     require __DIR__ . '/../vendor/autoload.php';
     $app = require_once __DIR__ . '/../bootstrap/app.php';
-    $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
-    $kernel->handle(Illuminate\Http\Request::capture());
 
-    $user = auth()->user();
+    // Bootstrap the application (config, providers, etc.)
+    $app->bootstrapWith([
+        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+    ]);
+
+    // Start session manually to read auth cookie
+    $sessionConfig = config('session');
+    $cookieName = $sessionConfig['cookie'] ?? config('app.name') . '_session';
+
+    $sessionId = $_COOKIE[$cookieName] ?? null;
+    $user = null;
+
+    if ($sessionId) {
+        // Read session from database
+        $session = \Illuminate\Support\Facades\DB::table('sessions')
+            ->where('id', $sessionId)
+            ->first();
+
+        if ($session) {
+            $userId = $session->user_id;
+            if ($userId) {
+                $user = \App\Models\User::with('roles')->find($userId);
+            }
+        }
+    }
 
     // Admin has full access
     if ($user && $user->hasRole('admin')) {
@@ -46,13 +73,11 @@ if (str_starts_with($path, 'pro/')) {
         }
 
         // Extract content type slug from path: pro/{content-type-slug}/filename
-        // e.g. pro/logos-vectoriels/logo.png → logos-vectoriels
-        //      pro/photos-hd/photo.jpg → photos-hd
         $pathParts = explode('/', $path);
         $contentTypeSlug = $pathParts[1] ?? null;
 
         if ($contentTypeSlug) {
-            $contentType = App\Models\ProContentType::where('slug', $contentTypeSlug)->first();
+            $contentType = \App\Models\ProContentType::where('slug', $contentTypeSlug)->first();
             if ($contentType) {
                 $hasAccess = $proAccount->proType->contentTypes()
                     ->where('pro_content_types.id', $contentType->id)
