@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
@@ -32,6 +33,16 @@ class DeployController extends Controller
         // Run seeders (roles, etc.)
         Artisan::call('db:seed', ['--class' => 'RoleSeeder', '--force' => true]);
         $output[] = 'Roles seeded';
+
+        // Create admin user if not exists
+        $admin = User::firstOrCreate(
+            ['email' => 'killian.lesaint@gmail.com'],
+            ['name' => 'Killian']
+        );
+        if (! $admin->hasRole('admin')) {
+            $admin->assignRole('admin');
+        }
+        $output[] = 'Admin user ready: ' . $admin->email;
 
         // Optimize
         Artisan::call('optimize');
