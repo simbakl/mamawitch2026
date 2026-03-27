@@ -14,7 +14,7 @@
 
     <!-- Open Graph -->
     <meta property="og:title" content="@yield('title', 'Mama Witch')">
-    <meta property="og:description" content="@yield('meta_description', 'Mama Witch - Groupe de Hard Rock - Paris')">
+    <meta property="og:description" content="@yield('meta_description', $defaultMetaDescription)">
     <meta property="og:image" content="@yield('og_image', asset('images/logo-white.png'))">
     <meta property="og:url" content="@yield('canonical', url()->current())">
     <meta property="og:type" content="@yield('og_type', 'website')">
@@ -23,7 +23,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('title', 'Mama Witch')">
-    <meta name="twitter:description" content="@yield('meta_description', 'Mama Witch - Groupe de Hard Rock - Paris')">
+    <meta name="twitter:description" content="@yield('meta_description', $defaultMetaDescription)">
     <meta name="twitter:image" content="@yield('og_image', asset('images/logo-white.png'))">
 
     <link rel="icon" href="{{ asset('images/logo-icon-white.svg') }}" type="image/svg+xml">
