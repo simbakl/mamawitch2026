@@ -1,0 +1,9 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Storage files: serve via storage.php (no symlink on OVH)
+    RewriteRule ^storage/(.*)$ public/storage.php?path=$1 [L,QSA]
+
+    # Everything else: forward to public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
