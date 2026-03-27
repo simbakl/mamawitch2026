@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminAudioController;
 use App\Http\Controllers\Auth\AccountSetupController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\DeployController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProAudioController;
 use App\Http\Controllers\ProController;
@@ -83,6 +84,9 @@ Route::middleware(['page.active:pro', 'auth', 'pro'])->group(function () {
 Route::get('/pro/audio/{track}', [ProAudioController::class, 'stream'])
     ->middleware(['page.active:pro', 'auth', 'pro'])
     ->name('pro.audio.stream');
+
+// Deploy (no SSH on OVH shared hosting)
+Route::get('/deploy/run', [DeployController::class, 'run'])->name('deploy.run');
 
 // Account setup & password reset
 Route::get('/account/setup/{token}', [AccountSetupController::class, 'show'])->name('account.setup');

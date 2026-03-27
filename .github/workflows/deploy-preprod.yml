@@ -1,0 +1,66 @@
+name: Deploy Preprod
+
+on:
+  push:
+    branches:
+      - preprod
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout preprod branch
+        uses: actions/checkout@v4
+        with:
+          ref: preprod
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql, mbstring, fileinfo, gd, openssl
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Publish Filament assets
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan filament:assets
+
+      - name: Remove dev files from deploy
+        run: |
+          rm -rf node_modules
+          rm -rf tests
+          rm -rf .github
+          rm -rf .claude
+          rm -rf docs
+          rm -f .env .env.example
+          rm -f phpunit.xml
+          rm -f vite.config.js
+          rm -f package.json package-lock.json
+          rm -f tailwind.config.js
+          rm -f postcss.config.js
+
+      - name: Deploy to deploy/preprod branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: deploy/preprod
+          publish_dir: .
+          force_orphan: true
+          commit_message: "deploy: preprod build from ${{ github.sha }}"
