@@ -30,6 +30,8 @@
     <link rel="sitemap" type="application/xml" href="{{ route('sitemap') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @include('partials.analytics')
 </head>
 <body class="bg-mw-black text-white font-sans antialiased">
 
