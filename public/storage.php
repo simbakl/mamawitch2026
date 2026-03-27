@@ -2,7 +2,7 @@
 
 /**
  * Serve files from storage/app/public/ when symlinks don't work (OVH shared hosting).
- * Pro files (pro/*) require authentication.
+ * Pro files (pro/*) require authentication + access matrix check.
  */
 
 $path = ltrim($_SERVER['PATH_INFO'] ?? $_GET['path'] ?? '', '/');
@@ -25,27 +25,45 @@ if (! is_file($fullPath)) {
     exit;
 }
 
-// Protected directories — require authenticated session
-$protectedPrefixes = ['pro/'];
-$isProtected = false;
-
-foreach ($protectedPrefixes as $prefix) {
-    if (str_starts_with($path, $prefix)) {
-        $isProtected = true;
-        break;
-    }
-}
-
-if ($isProtected) {
-    // Boot Laravel to check authentication
+// Check if file is in a protected directory
+if (str_starts_with($path, 'pro/')) {
+    // Boot Laravel for auth + access matrix check
     require __DIR__ . '/../vendor/autoload.php';
     $app = require_once __DIR__ . '/../bootstrap/app.php';
     $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
-    $request = Illuminate\Http\Request::capture();
-    $kernel->handle($request);
+    $kernel->handle(Illuminate\Http\Request::capture());
 
     $user = auth()->user();
-    if (! $user || (! $user->hasRole('pro') && ! $user->hasRole('admin'))) {
+
+    // Admin has full access
+    if ($user && $user->hasRole('admin')) {
+        // OK — serve file
+    } elseif ($user && $user->hasRole('pro')) {
+        $proAccount = $user->proAccount;
+        if (! $proAccount || $proAccount->status !== 'approved') {
+            http_response_code(403);
+            exit;
+        }
+
+        // Extract content type slug from path: pro/{content-type-slug}/filename
+        // e.g. pro/logos-vectoriels/logo.png → logos-vectoriels
+        //      pro/photos-hd/photo.jpg → photos-hd
+        $pathParts = explode('/', $path);
+        $contentTypeSlug = $pathParts[1] ?? null;
+
+        if ($contentTypeSlug) {
+            $contentType = App\Models\ProContentType::where('slug', $contentTypeSlug)->first();
+            if ($contentType) {
+                $hasAccess = $proAccount->proType->contentTypes()
+                    ->where('pro_content_types.id', $contentType->id)
+                    ->exists();
+                if (! $hasAccess) {
+                    http_response_code(403);
+                    exit;
+                }
+            }
+        }
+    } else {
         http_response_code(403);
         exit;
     }
@@ -68,6 +86,8 @@ $mimeTypes = [
 
 $ext = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
 $mime = $mimeTypes[$ext] ?? mime_content_type($fullPath) ?: 'application/octet-stream';
+
+$isProtected = str_starts_with($path, 'pro/');
 
 header('Content-Type: ' . $mime);
 header('Content-Length: ' . filesize($fullPath));
