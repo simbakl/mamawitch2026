@@ -78,7 +78,7 @@ class MyAccount extends Page implements HasForms
                             Forms\Components\Actions\Action::make('link_google')
                                 ->label('Lier mon compte Google')
                                 ->icon('heroicon-o-link')
-                                ->url('http://localhost/auth/google')
+                                ->url(url('/auth/google'))
                                 ->visible(fn () => ! auth()->user()->google_id),
                             Forms\Components\Actions\Action::make('unlink_google')
                                 ->label('Délier mon compte Google')
