@@ -11,6 +11,8 @@
     <link rel="icon" href="{{ asset('images/logo-icon-white.svg') }}" type="image/svg+xml">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @include('partials.analytics')
 </head>
 <body class="bg-mw-black text-white font-sans antialiased">
 

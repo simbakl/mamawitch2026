@@ -48,6 +48,7 @@ class LayoutComposer
             'social_youtube',
             'social_twitter',
             'meta_description',
+            'google_analytics_id',
         ]);
 
         $view->with([
@@ -62,6 +63,7 @@ class LayoutComposer
                 'twitter' => $socialSettings['social_twitter'],
             ],
             'defaultMetaDescription' => $socialSettings['meta_description'] ?? 'Mama Witch - Groupe de Hard Rock - Paris',
+            'googleAnalyticsId' => $socialSettings['google_analytics_id'],
         ]);
     }
 }
