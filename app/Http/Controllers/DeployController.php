@@ -22,65 +22,98 @@ class DeployController extends Controller
 
         $output = [];
 
-        $steps = [
-            'Clear file caches' => fn () => $this->clearFileCaches(),
-            'Run migrations' => fn () => $this->migrate(),
-            'Clear DB cache' => fn () => Artisan::call('cache:clear'),
-            'Seed roles' => fn () => Artisan::call('db:seed', ['--class' => 'RoleSeeder', '--force' => true]),
-            'Seed pro content' => fn () => Artisan::call('db:seed', ['--class' => 'ProContentSeeder', '--force' => true]),
-            'Create admin user' => fn () => $this->createAdmin(),
-            'Optimize' => fn () => Artisan::call('optimize'),
-            'Storage link' => fn () => $this->storageLink(),
-            'Filament assets' => fn () => Artisan::call('filament:assets'),
-        ];
+        // === PHASE 1: Critical — must succeed or stop ===
+        try {
+            Artisan::call('config:clear');
+            Artisan::call('route:clear');
+            Artisan::call('view:clear');
+            $output[] = 'File caches cleared: OK';
+        } catch (\Throwable $e) {
+            $output[] = 'File caches: FAIL — ' . $e->getMessage();
+            return $this->respond('error', $output, 'Cannot clear caches');
+        }
 
-        foreach ($steps as $name => $step) {
-            try {
-                $result = $step();
-                $output[] = "{$name}: OK" . ($result ? " ({$result})" : '');
-            } catch (\Throwable $e) {
-                $output[] = "{$name}: FAIL — {$e->getMessage()}";
+        try {
+            Artisan::call('migrate', ['--force' => true]);
+            $output[] = 'Migrations: OK — ' . trim(Artisan::output());
+        } catch (\Throwable $e) {
+            $output[] = 'Migrations: FAIL — ' . $e->getMessage();
+            return $this->respond('error', $output, 'Migration failed');
+        }
+
+        try {
+            Artisan::call('cache:clear');
+            $output[] = 'DB cache cleared: OK';
+        } catch (\Throwable $e) {
+            $output[] = 'DB cache: FAIL — ' . $e->getMessage();
+            return $this->respond('error', $output, 'Cannot clear DB cache');
+        }
+
+        try {
+            Artisan::call('db:seed', ['--class' => 'RoleSeeder', '--force' => true]);
+            $output[] = 'Roles seeded: OK';
+        } catch (\Throwable $e) {
+            $output[] = 'Roles: FAIL — ' . $e->getMessage();
+            return $this->respond('error', $output, 'Role seeding failed');
+        }
+
+        try {
+            $admin = User::firstOrCreate(
+                ['email' => 'killian.lesaint@gmail.com'],
+                ['name' => 'Killian']
+            );
+            if (! $admin->hasRole('admin')) {
+                $admin->assignRole('admin');
             }
+            $output[] = 'Admin user: OK — ' . $admin->email;
+        } catch (\Throwable $e) {
+            $output[] = 'Admin user: FAIL — ' . $e->getMessage();
+            return $this->respond('error', $output, 'Admin user creation failed');
         }
 
-        return response()->json([
-            'status' => 'ok',
-            'steps' => $output,
-        ]);
-    }
-
-    protected function clearFileCaches(): void
-    {
-        Artisan::call('config:clear');
-        Artisan::call('route:clear');
-        Artisan::call('view:clear');
-    }
-
-    protected function migrate(): string
-    {
-        Artisan::call('migrate', ['--force' => true]);
-
-        return trim(Artisan::output());
-    }
-
-    protected function createAdmin(): string
-    {
-        $admin = User::firstOrCreate(
-            ['email' => 'killian.lesaint@gmail.com'],
-            ['name' => 'Killian']
-        );
-
-        if (! $admin->hasRole('admin')) {
-            $admin->assignRole('admin');
+        // === PHASE 2: Secondary — nice to have, don't block ===
+        try {
+            Artisan::call('db:seed', ['--class' => 'ProContentSeeder', '--force' => true]);
+            $output[] = 'Pro content seeded: OK';
+        } catch (\Throwable $e) {
+            $output[] = 'Pro content: SKIP — ' . $e->getMessage();
         }
 
-        return $admin->email;
+        try {
+            Artisan::call('optimize');
+            $output[] = 'Optimized: OK';
+        } catch (\Throwable $e) {
+            $output[] = 'Optimize: SKIP — ' . $e->getMessage();
+        }
+
+        try {
+            if (! file_exists(public_path('storage'))) {
+                Artisan::call('storage:link');
+                $output[] = 'Storage linked: OK';
+            } else {
+                $output[] = 'Storage link: already exists';
+            }
+        } catch (\Throwable $e) {
+            $output[] = 'Storage link: SKIP — ' . $e->getMessage();
+        }
+
+        try {
+            Artisan::call('filament:assets');
+            $output[] = 'Filament assets: OK';
+        } catch (\Throwable $e) {
+            $output[] = 'Filament assets: SKIP — ' . $e->getMessage();
+        }
+
+        return $this->respond('ok', $output);
     }
 
-    protected function storageLink(): void
+    protected function respond(string $status, array $steps, ?string $error = null)
     {
-        if (! file_exists(public_path('storage'))) {
-            Artisan::call('storage:link');
+        $data = ['status' => $status, 'steps' => $steps];
+        if ($error) {
+            $data['error'] = $error;
         }
+
+        return response()->json($data, $status === 'ok' ? 200 : 500);
     }
 }
