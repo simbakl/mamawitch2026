@@ -5,7 +5,11 @@
 {{-- HERO --}}
 <section class="relative h-screen flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0">
-        @if ($hero['image'])
+        @if ($hero['image'] && str_ends_with(strtolower($hero['image']), '.mp4'))
+            <video autoplay muted loop playsinline class="w-full h-full object-cover">
+                <source src="{{ asset('storage/' . $hero['image']) }}" type="video/mp4">
+            </video>
+        @elseif ($hero['image'])
             <img src="{{ asset('storage/' . $hero['image']) }}" alt="Mama Witch - Hard Rock Paris" class="w-full h-full object-cover">
         @else
             <img src="{{ asset('images/hero-bg.jpg') }}" alt="Mama Witch - Hard Rock Paris" class="w-full h-full object-cover">
