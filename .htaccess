@@ -1,8 +1,8 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Storage files: route through public/index.php (no symlink on OVH)
-    RewriteRule ^storage/(.*)$ public/index.php [L]
+    # Storage files: serve via storage.php (no symlink on OVH)
+    RewriteRule ^storage/(.*)$ public/storage.php/$1 [L]
 
     # Everything else: forward to public/
     RewriteRule ^(.*)$ public/$1 [L]
