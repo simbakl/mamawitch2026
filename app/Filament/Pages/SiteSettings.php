@@ -42,6 +42,7 @@ class SiteSettings extends Page implements Forms\Contracts\HasForms
             'social_twitter' => SiteSetting::get('social_twitter', 'https://x.com/mamawitchoff'),
             'contact_email' => SiteSetting::get('contact_email', 'contact@mamawitch.fr'),
             'meta_description' => SiteSetting::get('meta_description', 'Mama Witch - Groupe de Hard Rock - Paris'),
+            'google_analytics_id' => SiteSetting::get('google_analytics_id'),
         ]);
     }
 
@@ -108,6 +109,10 @@ class SiteSettings extends Page implements Forms\Contracts\HasForms
                                     ->rows(2)
                                     ->maxLength(160)
                                     ->helperText('Affiché dans les résultats Google (max 160 caractères)'),
+                                Forms\Components\TextInput::make('google_analytics_id')
+                                    ->label('Google Analytics ID')
+                                    ->placeholder('G-XXXXXXXXXX')
+                                    ->helperText('ID de mesure Google Analytics 4. Laissez vide pour désactiver le tracking.'),
                             ]),
                     ])
                     ->columnSpanFull(),
