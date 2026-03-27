@@ -47,6 +47,9 @@ jobs:
       - name: Create production .env from secret
         run: echo "${{ secrets.PREPROD_ENV }}" > .env
 
+      - name: Clear bootstrap cache (avoid stale cache from CI)
+        run: rm -f bootstrap/cache/*.php
+
       - name: Create storage directory structure
         run: |
           mkdir -p storage/app/private
