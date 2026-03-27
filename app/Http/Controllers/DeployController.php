@@ -22,51 +22,65 @@ class DeployController extends Controller
 
         $output = [];
 
-        // Clear file-based caches only (safe before DB exists)
-        Artisan::call('config:clear');
-        Artisan::call('route:clear');
-        Artisan::call('view:clear');
-        $output[] = 'File caches cleared';
+        $steps = [
+            'Clear file caches' => fn () => $this->clearFileCaches(),
+            'Run migrations' => fn () => $this->migrate(),
+            'Clear DB cache' => fn () => Artisan::call('cache:clear'),
+            'Seed roles' => fn () => Artisan::call('db:seed', ['--class' => 'RoleSeeder', '--force' => true]),
+            'Seed pro content' => fn () => Artisan::call('db:seed', ['--class' => 'ProContentSeeder', '--force' => true]),
+            'Create admin user' => fn () => $this->createAdmin(),
+            'Optimize' => fn () => Artisan::call('optimize'),
+            'Storage link' => fn () => $this->storageLink(),
+            'Filament assets' => fn () => Artisan::call('filament:assets'),
+        ];
 
-        // Run migrations first (creates all tables)
-        Artisan::call('migrate', ['--force' => true]);
-        $output[] = 'Migrations: ' . trim(Artisan::output());
-
-        // Now safe to clear DB cache
-        Artisan::call('cache:clear');
-        $output[] = 'DB cache cleared';
-
-        // Run seeders (roles, etc.)
-        Artisan::call('db:seed', ['--class' => 'RoleSeeder', '--force' => true]);
-        $output[] = 'Roles seeded';
-
-        // Create admin user if not exists
-        $admin = User::firstOrCreate(
-            ['email' => 'killian.lesaint@gmail.com'],
-            ['name' => 'Killian']
-        );
-        if (! $admin->hasRole('admin')) {
-            $admin->assignRole('admin');
+        foreach ($steps as $name => $step) {
+            try {
+                $result = $step();
+                $output[] = "{$name}: OK" . ($result ? " ({$result})" : '');
+            } catch (\Throwable $e) {
+                $output[] = "{$name}: FAIL — {$e->getMessage()}";
+            }
         }
-        $output[] = 'Admin user ready: ' . $admin->email;
-
-        // Optimize
-        Artisan::call('optimize');
-        $output[] = 'Optimized';
-
-        // Storage link
-        if (! file_exists(public_path('storage'))) {
-            Artisan::call('storage:link');
-            $output[] = 'Storage linked';
-        }
-
-        // Filament assets
-        Artisan::call('filament:assets');
-        $output[] = 'Filament assets published';
 
         return response()->json([
             'status' => 'ok',
             'steps' => $output,
         ]);
+    }
+
+    protected function clearFileCaches(): void
+    {
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        Artisan::call('view:clear');
+    }
+
+    protected function migrate(): string
+    {
+        Artisan::call('migrate', ['--force' => true]);
+
+        return trim(Artisan::output());
+    }
+
+    protected function createAdmin(): string
+    {
+        $admin = User::firstOrCreate(
+            ['email' => 'killian.lesaint@gmail.com'],
+            ['name' => 'Killian']
+        );
+
+        if (! $admin->hasRole('admin')) {
+            $admin->assignRole('admin');
+        }
+
+        return $admin->email;
+    }
+
+    protected function storageLink(): void
+    {
+        if (! file_exists(public_path('storage'))) {
+            Artisan::call('storage:link');
+        }
     }
 }
