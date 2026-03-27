@@ -47,6 +47,23 @@ jobs:
       - name: Create production .env from secret
         run: echo "${{ secrets.PREPROD_ENV }}" > .env
 
+      - name: Create storage directory structure
+        run: |
+          mkdir -p storage/app/private
+          mkdir -p storage/app/public
+          mkdir -p storage/framework/cache/data
+          mkdir -p storage/framework/sessions
+          mkdir -p storage/framework/views
+          mkdir -p storage/logs
+          mkdir -p bootstrap/cache
+          touch storage/logs/.gitkeep
+          touch storage/app/private/.gitkeep
+          touch storage/app/public/.gitkeep
+          touch storage/framework/cache/data/.gitkeep
+          touch storage/framework/sessions/.gitkeep
+          touch storage/framework/views/.gitkeep
+          touch bootstrap/cache/.gitkeep
+
       - name: Prepare deploy (remove dev files, allow vendor/.env in git)
         run: |
           rm -rf node_modules tests .github .claude docs
