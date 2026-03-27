@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/deploy/run', [DeployController::class, 'run'])->name('deploy.run');
 
 // Serve storage files when symlink doesn't work (OVH shared hosting)
-Route::get('/storage-serve/{path}', function (string $path) {
+Route::get('/storage/{path}', function (string $path) {
     $fullPath = storage_path('app/public/' . $path);
 
     if (! file_exists($fullPath)) {
