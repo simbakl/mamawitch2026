@@ -54,7 +54,9 @@ class SiteSetting extends Model
                 foreach ($toFetch as $key) {
                     $value = $rows[$key] ?? null;
                     static::$memo[$key] = $value;
-                    Cache::forever("site_setting_{$key}", $value);
+                    if ($value !== null) {
+                        Cache::forever("site_setting_{$key}", $value);
+                    }
                 }
             }
         }
