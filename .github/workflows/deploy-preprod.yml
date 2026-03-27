@@ -81,5 +81,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: deploy/preprod
           publish_dir: .
-          force_orphan: true
+          force_orphan: false
+          keep_files: false
           commit_message: "deploy: preprod build from ${{ github.sha }}"
