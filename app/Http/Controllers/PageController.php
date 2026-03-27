@@ -21,12 +21,15 @@ class PageController extends Controller
     {
         // Batch-load hero settings in a single query
         $heroSettings = SiteSetting::getMany([
-            'hero_image', 'hero_title', 'hero_subtitle', 'hero_cta_text', 'hero_cta_url',
+            'hero_image', 'hero_logo_enabled', 'hero_logo_image',
+            'hero_title', 'hero_subtitle', 'hero_cta_text', 'hero_cta_url',
         ]);
 
         return view('pages.home', [
             'hero' => [
                 'image' => $heroSettings['hero_image'],
+                'logo_enabled' => (bool) ($heroSettings['hero_logo_enabled'] ?? true),
+                'logo_image' => $heroSettings['hero_logo_image'],
                 'title' => $heroSettings['hero_title'] ?? 'Mama Witch',
                 'subtitle' => $heroSettings['hero_subtitle'],
                 'cta_text' => $heroSettings['hero_cta_text'],

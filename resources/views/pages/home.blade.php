@@ -14,7 +14,9 @@
     </div>
 
     <div class="relative text-center px-4">
-        <img src="{{ asset('images/logo-white.png') }}" alt="Mama Witch" class="h-36 md:h-60 mx-auto mb-6">
+        @if ($hero['logo_enabled'])
+            <img src="{{ $hero['logo_image'] ? asset('storage/' . $hero['logo_image']) : asset('images/logo-white.png') }}" alt="Mama Witch" class="h-36 md:h-60 mx-auto mb-6">
+        @endif
         @if ($hero['subtitle'])
             <p class="text-lg md:text-2xl font-heading uppercase tracking-widest text-gray-300 mb-8">{{ $hero['subtitle'] }}</p>
         @endif

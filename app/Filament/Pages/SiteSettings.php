@@ -30,6 +30,8 @@ class SiteSettings extends Page implements Forms\Contracts\HasForms
     {
         $this->form->fill([
             'hero_image' => SiteSetting::get('hero_image'),
+            'hero_logo_enabled' => SiteSetting::get('hero_logo_enabled', '1'),
+            'hero_logo_image' => SiteSetting::get('hero_logo_image'),
             'hero_title' => SiteSetting::get('hero_title', 'Mama Witch'),
             'hero_subtitle' => SiteSetting::get('hero_subtitle'),
             'hero_cta_text' => SiteSetting::get('hero_cta_text'),
@@ -57,6 +59,18 @@ class SiteSettings extends Page implements Forms\Contracts\HasForms
                                     ->directory('hero')
                                     ->visibility('public')
                                     ->acceptedFileTypes(['image/*', 'video/mp4']),
+                                Forms\Components\Toggle::make('hero_logo_enabled')
+                                    ->label('Afficher le logo dans le hero')
+                                    ->default(true)
+                                    ->live()
+                                    ->inline(false),
+                                Forms\Components\FileUpload::make('hero_logo_image')
+                                    ->label('Logo personnalisé (optionnel)')
+                                    ->helperText('Laissez vide pour utiliser le logo par défaut.')
+                                    ->directory('hero')
+                                    ->visibility('public')
+                                    ->acceptedFileTypes(['image/*'])
+                                    ->visible(fn (Forms\Get $get) => (bool) $get('hero_logo_enabled')),
                                 Forms\Components\TextInput::make('hero_title')
                                     ->label('Titre principal')
                                     ->maxLength(255),
