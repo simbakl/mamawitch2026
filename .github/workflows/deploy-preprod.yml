@@ -44,8 +44,8 @@ jobs:
       - name: Publish Filament assets
         run: php artisan filament:assets
 
-      - name: Create production .env from secret
-        run: echo "${{ secrets.PREPROD_ENV }}" > .env
+      - name: Remove CI .env (production .env is managed via FTP on OVH)
+        run: rm -f .env
 
       - name: Clear bootstrap cache (avoid stale cache from CI)
         run: rm -f bootstrap/cache/*.php

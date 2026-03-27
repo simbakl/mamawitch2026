@@ -85,8 +85,7 @@ Route::get('/pro/audio/{track}', [ProAudioController::class, 'stream'])
     ->middleware(['page.active:pro', 'auth', 'pro'])
     ->name('pro.audio.stream');
 
-// Deploy (no SSH on OVH shared hosting) — bypass session/csrf middleware
-Route::get('/deploy/run', [DeployController::class, 'run'])->name('deploy.run')->withoutMiddleware(\Illuminate\Session\Middleware\StartSession::class);
+// Deploy route is registered in routes/deploy.php (no middleware)
 
 // Account setup & password reset
 Route::get('/account/setup/{token}', [AccountSetupController::class, 'show'])->name('account.setup');
