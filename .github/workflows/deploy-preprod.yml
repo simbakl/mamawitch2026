@@ -47,19 +47,12 @@ jobs:
       - name: Create production .env from secret
         run: echo "${{ secrets.PREPROD_ENV }}" > .env
 
-      - name: Remove dev files from deploy
+      - name: Remove dev-only files
         run: |
-          rm -rf node_modules
-          rm -rf tests
-          rm -rf .github
-          rm -rf .claude
-          rm -rf docs
-          rm -f .env.example .env.preprod.example
-          rm -f phpunit.xml
-          rm -f vite.config.js
-          rm -f package.json package-lock.json
-          rm -f tailwind.config.js
-          rm -f postcss.config.js
+          rm -rf node_modules tests .github .claude docs
+          rm -f .env.example .env.preprod.example phpunit.xml
+          rm -f vite.config.js package.json package-lock.json
+          rm -f tailwind.config.js postcss.config.js
 
       - name: Deploy to deploy/preprod branch
         uses: peaceiris/actions-gh-pages@v4
