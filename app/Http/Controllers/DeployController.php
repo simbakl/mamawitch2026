@@ -22,13 +22,19 @@ class DeployController extends Controller
 
         $output = [];
 
-        // Clear caches
-        Artisan::call('optimize:clear');
-        $output[] = 'Caches cleared';
+        // Clear file-based caches only (safe before DB exists)
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        Artisan::call('view:clear');
+        $output[] = 'File caches cleared';
 
-        // Run migrations
+        // Run migrations first (creates all tables)
         Artisan::call('migrate', ['--force' => true]);
         $output[] = 'Migrations: ' . trim(Artisan::output());
+
+        // Now safe to clear DB cache
+        Artisan::call('cache:clear');
+        $output[] = 'DB cache cleared';
 
         // Run seeders (roles, etc.)
         Artisan::call('db:seed', ['--class' => 'RoleSeeder', '--force' => true]);
