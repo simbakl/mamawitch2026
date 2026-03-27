@@ -12,29 +12,39 @@ $app->bootstrapWith([
     \Illuminate\Foundation\Bootstrap\BootProviders::class,
 ]);
 
-echo '<h3>Cookies received:</h3><pre>';
-print_r($_COOKIE);
-echo '</pre>';
+$cookieName = config('session.cookie', 'laravel_session');
+$encrypted = $_COOKIE[$cookieName] ?? null;
 
-$sessionConfig = config('session');
-echo '<h3>Session config:</h3>';
-echo 'Cookie name: ' . ($sessionConfig['cookie'] ?? 'not set') . '<br>';
-echo 'Driver: ' . ($sessionConfig['driver'] ?? 'not set') . '<br>';
-echo 'Domain: ' . ($sessionConfig['domain'] ?? 'null') . '<br>';
-echo 'Path: ' . ($sessionConfig['path'] ?? 'not set') . '<br>';
+echo 'Cookie name: ' . $cookieName . '<br>';
+echo 'Cookie found: ' . ($encrypted ? 'YES' : 'NO') . '<br>';
 
-$cookieName = $sessionConfig['cookie'] ?? 'laravel_session';
-$sessionId = $_COOKIE[$cookieName] ?? null;
-echo '<h3>Looking for cookie: ' . $cookieName . '</h3>';
-echo 'Found: ' . ($sessionId ? 'YES (' . substr($sessionId, 0, 10) . '...)' : 'NO') . '<br>';
+if ($encrypted) {
+    // Try decrypt
+    try {
+        $decrypted = \Illuminate\Support\Facades\Crypt::decryptString($encrypted);
+        echo 'Decrypted session ID: ' . $decrypted . '<br>';
 
-if ($sessionId) {
-    $session = \Illuminate\Support\Facades\DB::table('sessions')->where('id', $sessionId)->first();
-    echo '<h3>Session in DB:</h3>';
-    if ($session) {
-        echo 'user_id: ' . ($session->user_id ?? 'null') . '<br>';
-        echo 'ip: ' . ($session->ip_address ?? 'null') . '<br>';
-    } else {
-        echo 'Not found in DB<br>';
+        $session = \Illuminate\Support\Facades\DB::table('sessions')->where('id', $decrypted)->first();
+        echo 'Session in DB: ' . ($session ? 'YES, user_id=' . ($session->user_id ?? 'null') : 'NOT FOUND') . '<br>';
+    } catch (\Throwable $e) {
+        echo 'DecryptString failed: ' . $e->getMessage() . '<br>';
+    }
+
+    // Try decrypt (non-string)
+    try {
+        $decrypted2 = \Illuminate\Support\Facades\Crypt::decrypt($encrypted, false);
+        echo 'Decrypt (non-string): ' . $decrypted2 . '<br>';
+
+        $session2 = \Illuminate\Support\Facades\DB::table('sessions')->where('id', $decrypted2)->first();
+        echo 'Session in DB: ' . ($session2 ? 'YES, user_id=' . ($session2->user_id ?? 'null') : 'NOT FOUND') . '<br>';
+    } catch (\Throwable $e) {
+        echo 'Decrypt failed: ' . $e->getMessage() . '<br>';
+    }
+
+    // Show all sessions in DB
+    echo '<br>All sessions in DB:<br>';
+    $sessions = \Illuminate\Support\Facades\DB::table('sessions')->get();
+    foreach ($sessions as $s) {
+        echo '- id=' . substr($s->id, 0, 20) . '... user_id=' . ($s->user_id ?? 'null') . '<br>';
     }
 }
