@@ -26,13 +26,9 @@
 
             <p>Votre demande d'accès à l'<strong>Espace Pro</strong> de Mama Witch a été <strong style="color: #4ade80;">approuvée</strong>.</p>
 
-            <p>Vous pouvez dès maintenant vous connecter avec votre compte Google pour accéder aux contenus réservés aux professionnels.</p>
+            <p>Vous recevrez prochainement un email d'invitation pour configurer votre accès et vous connecter à l'Espace Pro.</p>
 
-            <p style="text-align: center;">
-                <a href="{{ url('/pro') }}" class="btn">Accéder à l'Espace Pro</a>
-            </p>
-
-            <p style="font-size: 13px; color: #999;">La connexion se fait exclusivement via Google ({{ $proAccount->email }}).</p>
+            <p style="font-size: 13px; color: #999;">Vous pourrez vous connecter avec un mot de passe ou via votre compte Google.</p>
         </div>
 
         <div class="footer">

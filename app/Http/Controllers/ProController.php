@@ -56,12 +56,12 @@ class ProController extends Controller
     }
 
     /**
-     * Public: handle invitation link
+     * Public: handle invitation link — create user account and redirect to setup
      */
     public function invitation(string $token)
     {
         $proAccount = ProAccount::where('invitation_token', $token)
-            ->whereIn('status', ['invited'])
+            ->where('status', 'invited')
             ->first();
 
         if (! $proAccount) {
@@ -69,10 +69,31 @@ class ProController extends Controller
                 ->with('error', 'Ce lien d\'invitation est invalide ou a déjà été utilisé.');
         }
 
-        // Store token in session and redirect to Google SSO
-        session(['pro_invitation_token' => $token]);
+        // Check if a user already exists for this email
+        $user = User::where('email', $proAccount->email)->first();
 
-        return redirect('http://localhost/auth/google');
+        if (! $user) {
+            // Create user without password — they'll set it on the setup page
+            $user = User::create([
+                'name' => $proAccount->full_name,
+                'email' => $proAccount->email,
+            ]);
+            $user->assignRole('pro');
+        } elseif (! $user->hasRole('pro')) {
+            $user->assignRole('pro');
+        }
+
+        // Link pro account to user
+        $proAccount->update([
+            'user_id' => $user->id,
+            'status' => 'approved',
+            'approved_at' => $proAccount->approved_at ?? now(),
+        ]);
+
+        // Generate setup token and redirect to account setup page
+        $setupToken = $user->generateSetupToken();
+
+        return redirect()->route('account.setup', $setupToken);
     }
 
     /**

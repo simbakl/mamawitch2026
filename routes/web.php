@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminAudioController;
+use App\Http\Controllers\Auth\AccountSetupController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProAudioController;
@@ -82,6 +83,12 @@ Route::middleware(['page.active:pro', 'auth', 'pro'])->group(function () {
 Route::get('/pro/audio/{track}', [ProAudioController::class, 'stream'])
     ->middleware(['page.active:pro', 'auth', 'pro'])
     ->name('pro.audio.stream');
+
+// Account setup & password reset
+Route::get('/account/setup/{token}', [AccountSetupController::class, 'show'])->name('account.setup');
+Route::post('/account/setup/{token}', [AccountSetupController::class, 'store'])->name('account.setup.store');
+Route::get('/forgot-password', [AccountSetupController::class, 'forgotPassword'])->name('password.request');
+Route::post('/forgot-password', [AccountSetupController::class, 'sendResetLink'])->name('password.email');
 
 // Auth
 Route::get('/login', fn () => redirect('/admin/login'))->name('login');

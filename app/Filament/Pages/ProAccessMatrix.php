@@ -23,13 +23,14 @@ class ProAccessMatrix extends Page
 
     public array $matrix = [];
 
-    protected $proTypesCache = null;
-
-    protected $contentTypesCache = null;
-
     public function mount(): void
     {
-        // Single query with eager-loaded pivot instead of N+1
+        $this->loadMatrix();
+    }
+
+    protected function loadMatrix(): void
+    {
+        $this->matrix = [];
         $proTypes = ProType::with('contentTypes')->orderBy('sort_order')->get();
 
         foreach ($proTypes as $proType) {
@@ -51,10 +52,6 @@ class ProAccessMatrix extends Page
             $this->matrix[$proTypeId][] = $contentTypeId;
         }
 
-        // Reset cached collections
-        $this->proTypesCache = null;
-        $this->contentTypesCache = null;
-
         Notification::make()
             ->success()
             ->title('Matrice mise à jour')
@@ -64,12 +61,12 @@ class ProAccessMatrix extends Page
 
     public function getProTypes()
     {
-        return $this->proTypesCache ??= ProType::orderBy('sort_order')->get();
+        return ProType::orderBy('sort_order')->get();
     }
 
     public function getContentTypes()
     {
-        return $this->contentTypesCache ??= ProContentType::orderBy('sort_order')->get();
+        return ProContentType::orderBy('sort_order')->get();
     }
 
     public static function canAccess(): bool

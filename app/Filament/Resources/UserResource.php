@@ -3,13 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
+use App\Mail\AccountSetupMail;
+use App\Mail\PasswordResetRequestMail;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
@@ -47,13 +50,10 @@ class UserResource extends Resource
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('password')
-                            ->label('Mot de passe')
-                            ->password()
-                            ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
-                            ->dehydrated(fn ($state) => filled($state))
-                            ->required(fn (string $operation) => $operation === 'create')
-                            ->maxLength(255),
+                        Forms\Components\Placeholder::make('password_info')
+                            ->label('')
+                            ->content('Un email sera envoyé à l\'utilisateur pour qu\'il configure son mot de passe.')
+                            ->visible(fn (string $operation) => $operation === 'create'),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Rôles')
@@ -79,13 +79,25 @@ class UserResource extends Resource
                             ->columns(3),
                     ]),
 
-                Forms\Components\Section::make('Google SSO')
+                Forms\Components\Section::make('Sécurité')
                     ->schema([
                         Forms\Components\Placeholder::make('google_status')
                             ->label('Compte Google')
                             ->content(fn (?User $record) => $record?->google_id
                                 ? 'Lié'
                                 : 'Non lié'
+                            ),
+                        Forms\Components\Placeholder::make('password_status')
+                            ->label('Mot de passe')
+                            ->content(fn (?User $record) => $record?->password
+                                ? 'Défini'
+                                : 'Non défini (connexion Google uniquement)'
+                            ),
+                        Forms\Components\Placeholder::make('reset_status')
+                            ->label('Réinitialisation')
+                            ->content(fn (?User $record) => $record?->must_reset_password
+                                ? 'Réinitialisation en attente'
+                                : 'Aucune'
                             ),
                         Forms\Components\Toggle::make('remove_google')
                             ->label('Délier le compte Google')
@@ -159,6 +171,33 @@ class UserResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\Action::make('force_reset')
+                    ->label('Forcer reset')
+                    ->icon('heroicon-o-key')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Forcer la réinitialisation du mot de passe')
+                    ->modalDescription('L\'utilisateur devra reconfigurer son mot de passe. Un email lui sera envoyé.')
+                    ->action(function (User $record) {
+                        $record->update([
+                            'password' => null,
+                            'must_reset_password' => true,
+                        ]);
+                        $record->generateSetupToken();
+                        Mail::to($record->email)->send(new PasswordResetRequestMail($record->fresh()));
+                        Notification::make()->title('Email de réinitialisation envoyé')->success()->send();
+                    }),
+                Tables\Actions\Action::make('resend_setup')
+                    ->label('Renvoyer invitation')
+                    ->icon('heroicon-o-envelope')
+                    ->color('info')
+                    ->visible(fn (User $record) => ! $record->password && ! $record->google_id)
+                    ->requiresConfirmation()
+                    ->action(function (User $record) {
+                        $record->generateSetupToken();
+                        Mail::to($record->email)->send(new AccountSetupMail($record->fresh()));
+                        Notification::make()->title('Email d\'invitation renvoyé')->success()->send();
+                    }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

@@ -32,6 +32,11 @@ class GoogleController extends Controller
                 ]);
             }
 
+            // Clear any pending setup token (user chose Google instead)
+            if ($user->setup_token) {
+                $user->clearSetupToken();
+            }
+
             Auth::login($user, true);
 
             if ($user->hasRole('pro')) {

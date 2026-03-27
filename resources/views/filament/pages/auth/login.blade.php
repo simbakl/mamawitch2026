@@ -12,6 +12,13 @@
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, scopes: $this->getRenderHookScopes()) }}
 
+    {{-- Forgot password --}}
+    <div class="text-center">
+        <a href="{{ url('/forgot-password') }}" class="text-sm text-gray-400 hover:text-white transition-colors">
+            Mot de passe oublié ?
+        </a>
+    </div>
+
     {{-- Separator --}}
     <div class="flex items-center gap-4 my-4">
         <div class="flex-1 h-px bg-gray-700"></div>

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
@@ -22,6 +23,9 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'google_id',
         'avatar',
+        'setup_token',
+        'setup_token_expires_at',
+        'must_reset_password',
     ];
 
     protected $hidden = [
@@ -34,7 +38,45 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'setup_token_expires_at' => 'datetime',
+            'must_reset_password' => 'boolean',
         ];
+    }
+
+    /**
+     * Generate a setup token for account activation or password reset.
+     */
+    public function generateSetupToken(): string
+    {
+        $token = Str::random(64);
+        $this->update([
+            'setup_token' => $token,
+            'setup_token_expires_at' => now()->addHours(48),
+        ]);
+
+        return $token;
+    }
+
+    /**
+     * Clear the setup token after use.
+     */
+    public function clearSetupToken(): void
+    {
+        $this->update([
+            'setup_token' => null,
+            'setup_token_expires_at' => null,
+            'must_reset_password' => false,
+        ]);
+    }
+
+    /**
+     * Check if the setup token is valid.
+     */
+    public function hasValidSetupToken(): bool
+    {
+        return $this->setup_token
+            && $this->setup_token_expires_at
+            && $this->setup_token_expires_at->isFuture();
     }
 
     public function canAccessPanel(Panel $panel): bool
