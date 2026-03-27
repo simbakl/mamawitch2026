@@ -5,7 +5,7 @@
  * URL: /storage.php/path/to/file.jpg
  */
 
-$path = ltrim($_SERVER['PATH_INFO'] ?? '', '/');
+$path = ltrim($_SERVER['PATH_INFO'] ?? $_GET['path'] ?? '', '/');
 
 if (empty($path)) {
     http_response_code(404);
