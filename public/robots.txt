@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /pro
+Disallow: /auth
+Disallow: /livewire
+Disallow: /tech-sheet
+
+Sitemap: https://mamawitch.fr/sitemap.xml
