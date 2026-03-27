@@ -127,7 +127,8 @@ class PageManager extends Page implements Forms\Contracts\HasForms
             if (! $def['can_disable']) {
                 static::$activeStates[$slug] = true;
             } else {
-                static::$activeStates[$slug] = (bool) ($values["page_active_{$slug}"] ?? '1');
+                $val = $values["page_active_{$slug}"];
+                static::$activeStates[$slug] = $val === null || $val === '' ? true : (bool) $val;
             }
         }
 
