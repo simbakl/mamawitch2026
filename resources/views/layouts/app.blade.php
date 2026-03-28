@@ -46,5 +46,8 @@
     {{-- Footer --}}
     @include('partials.footer')
 
+    {{-- Structured data --}}
+    @include('partials.jsonld')
+
 </body>
 </html>

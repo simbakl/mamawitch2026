@@ -63,7 +63,8 @@ class ReleaseResource extends Resource
                             ->directory('releases')
                             ->visibility('public')
                             ->imageResizeTargetWidth('800')
-                            ->imageCropAspectRatio('1:1'),
+                            ->imageCropAspectRatio('1:1')
+                            ->maxSize(5120),
                     ]),
 
                 Forms\Components\Section::make('Tracklist')

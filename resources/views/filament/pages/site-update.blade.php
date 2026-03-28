@@ -31,6 +31,10 @@
                     Mettre à jour le site
                 </x-filament::button>
             @endif
+
+            <x-filament::button wire:click="clearCache" icon="heroicon-o-trash" color="warning">
+                Vider le cache
+            </x-filament::button>
         </div>
 
         @if ($checked && $updateAvailable)

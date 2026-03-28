@@ -27,7 +27,7 @@ class GalleryResource extends Resource
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return parent::getEloquentQuery()
-            ->with(['photos' => fn ($q) => $q->orderBy('sort_order')->limit(1)]);
+            ->with(['photos' => fn ($q) => $q->orderBy('sort_order')]);
     }
 
     public static function form(Form $form): Form
@@ -56,22 +56,9 @@ class GalleryResource extends Resource
                             ->default(false),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Ajout rapide de photos')
-                    ->schema([
-                        Forms\Components\FileUpload::make('bulk_photos')
-                            ->label('Uploader plusieurs photos')
-                            ->image()
-                            ->multiple()
-                            ->reorderable()
-                            ->directory('galleries')
-                            ->visibility('public')
-                            ->imageResizeTargetWidth('1200')
-                            ->helperText('Sélectionnez plusieurs photos en une fois. Elles seront ajoutées à la galerie.')
-                            ->dehydrated(false),
-                    ])
-                    ,
-
                 Forms\Components\Section::make('Photos de la galerie')
+                    ->description('Réordonnez, modifiez les légendes ou supprimez des photos.')
+                    ->visible(fn (string $operation) => $operation === 'edit')
                     ->schema([
                         Forms\Components\Repeater::make('photos')
                             ->relationship()
@@ -82,21 +69,35 @@ class GalleryResource extends Resource
                                     ->required()
                                     ->directory('galleries')
                                     ->visibility('public')
+                                    ->maxSize(10240)
                                     ->imageResizeTargetWidth('1200'),
                                 Forms\Components\TextInput::make('caption')
                                     ->label('Légende')
-                                    ->default(fn () => 'Photo')
                                     ->maxLength(255),
                             ])
                             ->columns(2)
-                            ->itemLabel(fn (array $state): ?string => $state['caption'] ?? 'Photo')
+                            ->itemLabel(fn (array $state): ?string => $state['caption'] ?: 'Photo')
                             ->reorderable('sort_order')
                             ->orderColumn('sort_order')
                             ->collapsible()
                             ->collapsed()
-                            ->cloneable()
                             ->defaultItems(0)
                             ->addActionLabel('Ajouter une photo'),
+                    ]),
+
+                Forms\Components\Section::make('Ajouter des photos en lot')
+                    ->description('Sélectionnez plusieurs photos puis sauvegardez. Elles seront ajoutées à la galerie.')
+                    ->schema([
+                        Forms\Components\FileUpload::make('bulk_photos')
+                            ->label('')
+                            ->image()
+                            ->multiple()
+                            ->reorderable()
+                            ->directory('galleries')
+                            ->visibility('public')
+                            ->imageResizeTargetWidth('1200')
+                            ->maxSize(10240)
+                            ->dehydrated(false),
                     ]),
             ]);
     }
