@@ -17,9 +17,11 @@ class GoogleController extends Controller
             session(['google_link_user_id' => Auth::id()]);
         }
 
-        // Remember where the user came from for error redirects
+        // Remember where the user came from for error redirects (same host only)
         $referer = url()->previous();
-        session(['google_redirect_back' => $referer]);
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $refererHost = parse_url($referer, PHP_URL_HOST);
+        session(['google_redirect_back' => ($refererHost === $appHost) ? $referer : '/admin/login']);
 
         return Socialite::driver('google')->stateless()->redirect();
     }

@@ -67,7 +67,7 @@
                         @elseif ($concert->status === 'cancelled')
                             <span class="px-3 py-1 bg-red-500/20 text-red-400 text-xs font-heading uppercase rounded">Annulé</span>
                         @elseif ($concert->ticket_url)
-                            <a href="{{ $concert->ticket_url }}" target="_blank" class="px-4 py-1.5 bg-mw-red hover:bg-mw-red-dark text-white text-xs font-heading uppercase tracking-wider rounded transition-colors">
+                            <a href="{{ $concert->ticket_url }}" target="_blank" rel="noopener noreferrer" class="px-4 py-1.5 bg-mw-red hover:bg-mw-red-dark text-white text-xs font-heading uppercase tracking-wider rounded transition-colors">
                                 Billets
                             </a>
                         @endif
@@ -143,16 +143,16 @@
 
                 <div class="flex flex-wrap justify-center md:justify-start gap-3">
                     @if ($latestRelease->spotify_url)
-                        <a href="{{ $latestRelease->spotify_url }}" target="_blank" class="px-4 py-2 bg-[#1DB954]/20 text-[#1DB954] hover:bg-[#1DB954] hover:text-black text-xs font-heading uppercase rounded transition-all">Spotify</a>
+                        <a href="{{ $latestRelease->spotify_url }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-[#1DB954]/20 text-[#1DB954] hover:bg-[#1DB954] hover:text-black text-xs font-heading uppercase rounded transition-all">Spotify</a>
                     @endif
                     @if ($latestRelease->bandcamp_url)
-                        <a href="{{ $latestRelease->bandcamp_url }}" target="_blank" class="px-4 py-2 bg-[#629aa9]/20 text-[#629aa9] hover:bg-[#629aa9] hover:text-black text-xs font-heading uppercase rounded transition-all">Bandcamp</a>
+                        <a href="{{ $latestRelease->bandcamp_url }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-[#629aa9]/20 text-[#629aa9] hover:bg-[#629aa9] hover:text-black text-xs font-heading uppercase rounded transition-all">Bandcamp</a>
                     @endif
                     @if ($latestRelease->apple_music_url)
-                        <a href="{{ $latestRelease->apple_music_url }}" target="_blank" class="px-4 py-2 bg-[#fc3c44]/20 text-[#fc3c44] hover:bg-[#fc3c44] hover:text-white text-xs font-heading uppercase rounded transition-all">Apple Music</a>
+                        <a href="{{ $latestRelease->apple_music_url }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-[#fc3c44]/20 text-[#fc3c44] hover:bg-[#fc3c44] hover:text-white text-xs font-heading uppercase rounded transition-all">Apple Music</a>
                     @endif
                     @if ($latestRelease->deezer_url)
-                        <a href="{{ $latestRelease->deezer_url }}" target="_blank" class="px-4 py-2 bg-[#a238ff]/20 text-[#a238ff] hover:bg-[#a238ff] hover:text-white text-xs font-heading uppercase rounded transition-all">Deezer</a>
+                        <a href="{{ $latestRelease->deezer_url }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-[#a238ff]/20 text-[#a238ff] hover:bg-[#a238ff] hover:text-white text-xs font-heading uppercase rounded transition-all">Deezer</a>
                     @endif
                 </div>
 
