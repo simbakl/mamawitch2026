@@ -42,7 +42,7 @@
             </div>
 
             <button type="submit"
-                    class="w-full px-6 py-3 bg-mw-red hover:bg-mw-red-dark text-white font-heading uppercase tracking-wider text-sm rounded-lg transition-colors">
+                    class="w-full px-6 py-3 bg-mw-red hover:bg-mw-red-dark text-white font-heading uppercase tracking-wider text-sm rounded-lg transition-colors cursor-pointer">
                 Définir mon mot de passe
             </button>
         </form>
