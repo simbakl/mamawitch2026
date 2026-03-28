@@ -13,7 +13,7 @@
         </div>
 
         <div class="mb-10">
-            <span class="text-mw-amber text-xs font-heading uppercase tracking-wider">Ecoute privee</span>
+            <span class="text-mw-amber text-xs font-heading uppercase tracking-wider">Écoute privée</span>
             <h1 class="font-display text-3xl md:text-4xl uppercase tracking-wider mt-2">{{ $project->title }}</h1>
             @if ($project->description)
                 <p class="text-gray-400 mt-3">{{ $project->description }}</p>
@@ -89,7 +89,7 @@
 
             {{-- Notice --}}
             <p class="text-center text-gray-600 text-xs mt-6">
-                Contenu confidentiel — Ecoute reservee a {{ $proAccount->structure }}
+                Contenu confidentiel — Écoute réservée à {{ $proAccount->structure }}
             </p>
         </div>
     </div>

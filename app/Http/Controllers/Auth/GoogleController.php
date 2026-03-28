@@ -12,13 +12,63 @@ class GoogleController extends Controller
 {
     public function redirect()
     {
-        return Socialite::driver('google')->redirect();
+        // Store context for after Google redirect
+        if (Auth::check()) {
+            session(['google_link_user_id' => Auth::id()]);
+        }
+
+        // Remember where the user came from for error redirects
+        $referer = url()->previous();
+        session(['google_redirect_back' => $referer]);
+
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     public function callback()
     {
-        $googleUser = Socialite::driver('google')->user();
+        $redirectBack = session()->pull('google_redirect_back', '/admin/login');
+        $linkUserId = session()->pull('google_link_user_id');
 
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+        } catch (\Exception $e) {
+            return redirect($redirectBack)->with('error', 'Erreur lors de la connexion avec Google. Veuillez réessayer.');
+        }
+
+        if ($linkUserId) {
+            return $this->linkGoogle($googleUser, $linkUserId, $redirectBack);
+        }
+
+        return $this->loginOrRegister($googleUser, $redirectBack);
+    }
+
+    private function linkGoogle($googleUser, int $userId, string $redirectBack)
+    {
+        $currentUser = User::findOrFail($userId);
+
+        // Check if this Google account is already linked to another user
+        $existingUser = User::where('google_id', $googleUser->getId())->first();
+        if ($existingUser && $existingUser->id !== $currentUser->id) {
+            return redirect($redirectBack)->with('error', 'Ce compte Google est déjà lié à un autre utilisateur.');
+        }
+
+        $currentUser->update([
+            'google_id' => $googleUser->getId(),
+            'google_email' => $googleUser->getEmail(),
+            'avatar' => $googleUser->getAvatar(),
+        ]);
+
+        Auth::login($currentUser, true);
+
+        if ($currentUser->hasRole('pro')) {
+            return redirect()->route('pro.dashboard')->with('success', 'Compte Google lié avec succès.');
+        }
+
+        return redirect('/admin/my-account')->with('success', 'Compte Google lié avec succès.');
+    }
+
+    private function loginOrRegister($googleUser, string $redirectBack)
+    {
         $user = User::where('google_id', $googleUser->getId())
             ->orWhere('email', $googleUser->getEmail())
             ->first();
@@ -28,6 +78,7 @@ class GoogleController extends Controller
             if (! $user->google_id) {
                 $user->update([
                     'google_id' => $googleUser->getId(),
+                    'google_email' => $googleUser->getEmail(),
                     'avatar' => $googleUser->getAvatar(),
                 ]);
             }
@@ -52,7 +103,7 @@ class GoogleController extends Controller
             ->first();
 
         if (! $proAccount) {
-            return redirect('/')->with('error', 'Aucun compte associé à cet email.');
+            return redirect($redirectBack)->with('error', 'Aucun compte associé à cet email. Veuillez d\'abord créer un compte avec votre mot de passe.');
         }
 
         // Create user for the pro
@@ -60,6 +111,7 @@ class GoogleController extends Controller
             'name' => $proAccount->full_name,
             'email' => $googleUser->getEmail(),
             'google_id' => $googleUser->getId(),
+            'google_email' => $googleUser->getEmail(),
             'avatar' => $googleUser->getAvatar(),
         ]);
 

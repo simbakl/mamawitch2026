@@ -48,7 +48,7 @@
             </div>
 
             <div class="text-center">
-                <button type="submit" class="px-8 py-3 bg-mw-red hover:bg-mw-red-dark text-white font-heading uppercase tracking-wider text-sm rounded transition-all duration-300">
+                <button type="submit" class="px-8 py-3 bg-mw-red hover:bg-mw-red-dark text-white font-heading uppercase tracking-wider text-sm rounded transition-all duration-300 cursor-pointer">
                     Envoyer le message
                 </button>
             </div>

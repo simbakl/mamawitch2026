@@ -11,8 +11,8 @@
         .content { line-height: 1.8; font-size: 15px; }
         .field { margin-bottom: 20px; }
         .field-label { color: #999; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .field-value { color: #e0e0e0; }
-        .message-box { background: #1a1a1a; border-left: 3px solid #c41e3a; padding: 15px 20px; margin: 20px 0; white-space: pre-wrap; }
+        .field-value { color: #333333; }
+        .message-box { border-left: 3px solid #c41e3a; padding: 15px 20px; margin: 20px 0; white-space: pre-wrap; color: #333333; }
         .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; text-align: center; color: #666; font-size: 12px; }
     </style>
 </head>

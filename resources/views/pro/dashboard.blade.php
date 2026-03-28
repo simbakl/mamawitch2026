@@ -57,7 +57,7 @@
         @if ($musicProjects->count())
         <div class="mt-20">
             <h2 class="font-display text-2xl uppercase tracking-wider mb-8">
-                <span class="text-mw-red">///</span> Ecoute privee
+                <span class="text-mw-red">///</span> Écoute privée
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @foreach ($musicProjects as $project)

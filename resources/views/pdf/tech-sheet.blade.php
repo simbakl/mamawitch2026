@@ -72,7 +72,7 @@
                     <div class="global-col"><strong>Balance</strong> {{ $global['soundcheck_time'] }}</div>
                 @endif
                 @if ($global['teardown_time'])
-                    <div class="global-col"><strong>Demontage</strong> {{ $global['teardown_time'] }}</div>
+                    <div class="global-col"><strong>Démontage</strong> {{ $global['teardown_time'] }}</div>
                 @endif
             </div>
         </div>
@@ -100,10 +100,10 @@
             ];
         @endphp
         <div class="section" style="page-break-inside: avoid;">
-            <div class="section-title">Plan de scene</div>
+            <div class="section-title">Plan de scène</div>
             <div style="position: relative; width: {{ $canvasWidthPx }}px; height: {{ $canvasHeightPx }}px; background: #f0f0f0; border: 2px solid #333; margin: 10px auto;">
                 {{-- Back label --}}
-                <div style="position: absolute; top: 3px; width: 100%; text-align: center; font-size: 7px; color: #aaa; text-transform: uppercase; letter-spacing: 2px;">FOND DE SCENE</div>
+                <div style="position: absolute; top: 3px; width: 100%; text-align: center; font-size: 7px; color: #aaa; text-transform: uppercase; letter-spacing: 2px;">FOND DE SCÈNE</div>
                 {{-- Stage front line --}}
                 <div style="position: absolute; bottom: {{ round($canvasHeightPx * 0.08) }}px; left: 5%; right: 5%; border-top: 1px dashed #999;"></div>
                 {{-- Public label --}}
@@ -125,12 +125,12 @@
                 @endforeach
             </div>
             <div style="text-align: center; font-size: 9px; color: #666; margin-top: 5px;">
-                Scene : {{ $stageW / 100 }}m x {{ $stageD / 100 }}m
+                Scène : {{ $stageW / 100 }}m x {{ $stageD / 100 }}m
             </div>
         </div>
     @elseif ($stagePlan?->image)
         <div class="section" style="page-break-inside: avoid;">
-            <div class="section-title">Plan de scene</div>
+            <div class="section-title">Plan de scène</div>
             <div style="text-align: center; padding: 10px 0;">
                 <img src="{{ public_path('storage/' . $stagePlan->image) }}" style="max-width: 100%; max-height: 350px;">
             </div>
@@ -139,7 +139,7 @@
 
     {{-- EQUIPMENT PER MEMBER --}}
     <div class="section">
-        <div class="section-title">Materiel du groupe (backline)</div>
+        <div class="section-title">Matériel du groupe (backline)</div>
 
         @foreach ($members as $member)
             @if ($member->equipment->count())
@@ -169,7 +169,7 @@
 
     {{-- TECHNICAL REQUIREMENTS --}}
     <div class="section">
-        <div class="section-title">Besoins techniques (a fournir par la salle)</div>
+        <div class="section-title">Besoins techniques (à fournir par la salle)</div>
 
         @foreach ($members as $member)
             @if ($member->techRequirement)
@@ -188,7 +188,7 @@
                                 <div class="req-item"><span class="req-label">Micros / DI :</span> {{ $req->microphones }}</div>
                             @endif
                             @if ($req->power)
-                                <div class="req-item"><span class="req-label">Electricite :</span> {{ $req->power }}</div>
+                                <div class="req-item"><span class="req-label">Électricité :</span> {{ $req->power }}</div>
                             @endif
                             @if ($req->monitoring)
                                 <div class="req-item"><span class="req-label">Monitoring :</span> {{ $req->monitoring }}</div>
@@ -221,13 +221,13 @@
     {{-- NOTES --}}
     @if ($global['global_notes'])
         <div class="section">
-            <div class="section-title">Notes complementaires</div>
+            <div class="section-title">Notes complémentaires</div>
             <p style="padding: 5px;">{{ $global['global_notes'] }}</p>
         </div>
     @endif
 
     <div class="footer">
-        MAMA WITCH - Fiche Technique - Generee le {{ now()->format('d/m/Y') }} - contact@mamawitch.fr
+        MAMA WITCH - Fiche Technique - Générée le {{ now()->format('d/m/Y') }} - contact@mamawitch.fr
     </div>
 
 </body>
