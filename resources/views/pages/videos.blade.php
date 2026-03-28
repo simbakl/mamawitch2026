@@ -3,7 +3,7 @@
 @section('meta_description', 'Clips, lives et sessions vidéo de Mama Witch, groupe de Hard Rock à Paris.')
 
 @php
-    $categoryLabels = ['clip' => 'Clips', 'live' => 'Live', 'session' => 'Sessions', 'interview' => 'Interviews'];
+    $categoryLabels = ['clip' => 'Clips', 'live' => 'Live', 'session' => 'Sessions', 'interview' => 'Interviews', 'other' => 'Autres'];
     $categories = $videos->pluck('category')->unique()->filter();
 @endphp
 
