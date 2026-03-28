@@ -69,8 +69,8 @@
                                 @if (! empty($article['date'])) — {{ \Carbon\Carbon::parse($article['date'])->format('d/m/Y') }} @endif
                             </p>
                         </div>
-                        @if (! empty($article['url']))
-                            <a href="{{ $article['url'] }}" target="_blank" class="text-mw-red text-xs font-heading uppercase tracking-wider hover:text-white transition-colors flex-shrink-0">
+                        @if (! empty($article['url']) && in_array(parse_url($article['url'], PHP_URL_SCHEME), ['http', 'https']))
+                            <a href="{{ $article['url'] }}" target="_blank" rel="noopener noreferrer" class="text-mw-red text-xs font-heading uppercase tracking-wider hover:text-white transition-colors flex-shrink-0">
                                 Lire &rarr;
                             </a>
                         @endif
@@ -138,7 +138,7 @@
                 </svg>
                 <h3 class="font-heading uppercase tracking-wider mb-2">Fiche Technique PDF</h3>
                 <p class="text-gray-400 text-sm mb-6">Document auto-généré avec l'équipement et les besoins techniques du groupe.</p>
-                <a href="{{ route('tech-sheet.pdf') }}" target="_blank"
+                <a href="{{ route('tech-sheet.pdf') }}" target="_blank" rel="noopener noreferrer"
                    class="inline-block px-8 py-3 bg-mw-red hover:bg-mw-red-dark text-white font-heading uppercase tracking-wider text-sm transition-all rounded">
                     Télécharger le PDF
                 </a>

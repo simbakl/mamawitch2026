@@ -43,7 +43,7 @@ class AccountSetupController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
 
-        $user->update(['password' => $request->password]);
+        $user->update(['password' => bcrypt($request->password)]);
         $user->clearSetupToken();
 
         Auth::login($user);
@@ -75,13 +75,11 @@ class AccountSetupController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (! $user) {
-            return back()->withErrors(['email' => 'Aucun compte n\'est associé à cette adresse email.'])->withInput();
+        if ($user) {
+            $user->generateSetupToken();
+            Mail::to($user->email)->send(new PasswordResetRequestMail($user->fresh()));
         }
 
-        $user->generateSetupToken();
-        Mail::to($user->email)->send(new PasswordResetRequestMail($user->fresh()));
-
-        return back()->with('success', 'Un email de réinitialisation a été envoyé à ' . $user->email . '.');
+        return back()->with('success', 'Si cette adresse est associée à un compte, un email de réinitialisation a été envoyé.');
     }
 }

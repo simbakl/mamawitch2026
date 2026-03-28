@@ -50,6 +50,7 @@ return [
         'pro-audio' => [
             'driver' => 'local',
             'root' => storage_path('app/private/pro-audio'),
+            'visibility' => 'private',
             'throw' => true,
         ],
 

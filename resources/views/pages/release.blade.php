@@ -29,16 +29,16 @@
                 {{-- Platform links --}}
                 <div class="flex flex-wrap gap-2 mt-4">
                     @if ($release->spotify_url)
-                        <a href="{{ $release->spotify_url }}" target="_blank" class="px-4 py-2 bg-[#1DB954]/20 text-[#1DB954] hover:bg-[#1DB954] hover:text-black text-xs font-heading uppercase rounded transition-all">Spotify</a>
+                        <a href="{{ $release->spotify_url }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-[#1DB954]/20 text-[#1DB954] hover:bg-[#1DB954] hover:text-black text-xs font-heading uppercase rounded transition-all">Spotify</a>
                     @endif
                     @if ($release->bandcamp_url)
-                        <a href="{{ $release->bandcamp_url }}" target="_blank" class="px-4 py-2 bg-[#629aa9]/20 text-[#629aa9] hover:bg-[#629aa9] hover:text-black text-xs font-heading uppercase rounded transition-all">Bandcamp</a>
+                        <a href="{{ $release->bandcamp_url }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-[#629aa9]/20 text-[#629aa9] hover:bg-[#629aa9] hover:text-black text-xs font-heading uppercase rounded transition-all">Bandcamp</a>
                     @endif
                     @if ($release->apple_music_url)
-                        <a href="{{ $release->apple_music_url }}" target="_blank" class="px-4 py-2 bg-[#fc3c44]/20 text-[#fc3c44] hover:bg-[#fc3c44] hover:text-white text-xs font-heading uppercase rounded transition-all">Apple Music</a>
+                        <a href="{{ $release->apple_music_url }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-[#fc3c44]/20 text-[#fc3c44] hover:bg-[#fc3c44] hover:text-white text-xs font-heading uppercase rounded transition-all">Apple Music</a>
                     @endif
                     @if ($release->deezer_url)
-                        <a href="{{ $release->deezer_url }}" target="_blank" class="px-4 py-2 bg-[#a238ff]/20 text-[#a238ff] hover:bg-[#a238ff] hover:text-white text-xs font-heading uppercase rounded transition-all">Deezer</a>
+                        <a href="{{ $release->deezer_url }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-[#a238ff]/20 text-[#a238ff] hover:bg-[#a238ff] hover:text-white text-xs font-heading uppercase rounded transition-all">Deezer</a>
                     @endif
                 </div>
             </div>
@@ -47,7 +47,7 @@
         {{-- Player embed --}}
         @if ($release->player_embed_url)
             <div class="mt-8">
-                <iframe src="{{ $release->player_embed_url }}" title="{{ $release->title }}" loading="lazy" class="w-full h-[380px] rounded-lg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe src="{{ $release->player_embed_url }}" title="{{ $release->title }}" loading="lazy" class="w-full rounded-lg aspect-video md:h-[380px] md:aspect-auto" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
         @endif
 

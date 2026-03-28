@@ -32,8 +32,8 @@ class ProAudioController extends Controller
         $mimeType = str_ends_with(strtolower($track->file_path), '.wav') ? 'audio/wav' : 'audio/mpeg';
         $totalChunks = (int) ceil($fileSize / self::CHUNK_SIZE);
 
-        // Generate token-protected chunk URLs (expire in 30s)
-        $expires = time() + 30;
+        // Generate token-protected chunk URLs (expire in 5 min)
+        $expires = time() + 300;
         $chunks = [];
         for ($i = 0; $i < $totalChunks; $i++) {
             $token = hash_hmac('sha256', "{$track->id}:{$i}:{$expires}", config('app.key'));

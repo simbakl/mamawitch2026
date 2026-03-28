@@ -2,6 +2,40 @@
 @section('title', 'Concerts')
 @section('meta_description', 'Dates de concerts et événements de Mama Witch, groupe de Hard Rock à Paris.')
 
+@push('jsonld')
+@foreach ($upcoming as $concert)
+@php
+    $eventData = [
+        '@context' => 'https://schema.org',
+        '@type' => 'MusicEvent',
+        'name' => $concert->title,
+        'startDate' => $concert->date->toIso8601String(),
+        'location' => [
+            '@type' => 'Place',
+            'name' => $concert->venue,
+            'address' => array_filter([
+                '@type' => 'PostalAddress',
+                'addressLocality' => $concert->city,
+                'postalCode' => $concert->postal_code,
+            ]),
+        ],
+        'performer' => ['@type' => 'MusicGroup', 'name' => 'Mama Witch'],
+        'eventStatus' => match($concert->status) {
+            'soldout' => 'https://schema.org/EventSoldOut',
+            'cancelled' => 'https://schema.org/EventCancelled',
+            default => 'https://schema.org/EventScheduled',
+        },
+    ];
+    if ($concert->ticket_url) {
+        $eventData['offers'] = ['@type' => 'Offer', 'url' => $concert->ticket_url];
+    }
+@endphp
+<script type="application/ld+json">
+{!! json_encode($eventData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endforeach
+@endpush
+
 @section('content')
 <div class="pt-24 pb-20 px-4">
     <div class="max-w-5xl mx-auto">
@@ -35,7 +69,7 @@
                                 @elseif ($concert->status === 'cancelled')
                                     <span class="px-3 py-1 bg-red-500/20 text-red-400 text-xs font-heading uppercase rounded line-through">Annulé</span>
                                 @elseif ($concert->ticket_url)
-                                    <a href="{{ $concert->ticket_url }}" target="_blank" @click.stop class="px-5 py-2 bg-mw-red hover:bg-mw-red-dark text-white text-xs font-heading uppercase tracking-wider rounded transition-colors">
+                                    <a href="{{ $concert->ticket_url }}" target="_blank" rel="noopener noreferrer" @click.stop class="px-5 py-2 bg-mw-red hover:bg-mw-red-dark text-white text-xs font-heading uppercase tracking-wider rounded transition-colors">
                                         Billets
                                     </a>
                                 @endif
@@ -69,7 +103,7 @@
                                         @endif
                                         @if ($concert->description)
                                             <div class="flex-1">
-                                                <div class="text-gray-400 text-sm leading-relaxed prose prose-sm prose-invert prose-p:my-1 prose-headings:text-white prose-a:text-mw-red max-w-none">{!! $concert->description !!}</div>
+                                                <div class="text-gray-400 text-sm leading-relaxed prose prose-sm prose-invert prose-p:my-1 prose-headings:text-white prose-a:text-mw-red max-w-none">{!! clean($concert->description) !!}</div>
                                             </div>
                                         @endif
                                     </div>
@@ -131,7 +165,7 @@
                                         @endif
                                         @if ($concert->description)
                                             <div class="flex-1">
-                                                <div class="text-gray-400 text-sm leading-relaxed prose prose-sm prose-invert prose-p:my-1 prose-headings:text-white prose-a:text-mw-red max-w-none">{!! $concert->description !!}</div>
+                                                <div class="text-gray-400 text-sm leading-relaxed prose prose-sm prose-invert prose-p:my-1 prose-headings:text-white prose-a:text-mw-red max-w-none">{!! clean($concert->description) !!}</div>
                                             </div>
                                         @endif
                                     </div>
