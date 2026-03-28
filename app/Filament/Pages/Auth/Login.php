@@ -3,11 +3,10 @@
 namespace App\Filament\Pages\Auth;
 
 use App\Models\User;
-use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
-use Filament\Facades\Filament;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as BaseLogin;
+use Illuminate\Validation\ValidationException;
 
 class Login extends BaseLogin
 {
@@ -26,6 +25,19 @@ class Login extends BaseLogin
                 ->body('Votre mot de passe doit être réinitialisé. Vérifiez votre boîte email.')
                 ->danger()
                 ->send();
+
+            return null;
+        }
+
+        // Attempt authentication manually for pro users
+        if ($user?->hasRole('pro')) {
+            if (! auth()->attempt(['email' => $data['email'], 'password' => $data['password']], $data['remember'] ?? false)) {
+                throw ValidationException::withMessages([
+                    'data.email' => __('filament-panels::pages/auth/login.messages.failed'),
+                ]);
+            }
+
+            $this->redirect(route('pro.dashboard'));
 
             return null;
         }

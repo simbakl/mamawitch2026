@@ -2,14 +2,37 @@
 @section('title', 'Discographie')
 @section('meta_description', 'Discographie complète de Mama Witch - EPs, singles et albums.')
 
+@php
+    $typeLabels = ['album' => 'Albums', 'ep' => 'EPs', 'single' => 'Singles'];
+    $types = $releases->pluck('type')->unique()->filter();
+@endphp
+
 @section('content')
 <div class="pt-24 pb-20 px-4">
-    <div class="max-w-5xl mx-auto">
-        <h1 class="font-display text-4xl md:text-5xl uppercase tracking-wider text-center mb-16">Discographie</h1>
+    <div class="max-w-5xl mx-auto" x-data="{ filter: 'all' }">
+        <h1 class="font-display text-4xl md:text-5xl uppercase tracking-wider text-center mb-12">Discographie</h1>
+
+        {{-- Type filters --}}
+        @if ($types->count() > 1)
+            <div class="flex flex-wrap justify-center gap-2 mb-12">
+                <button @click="filter = 'all'"
+                    :class="filter === 'all' ? 'bg-mw-red text-white' : 'bg-mw-dark text-gray-400 hover:text-white border border-white/10'"
+                    class="px-4 py-1.5 text-xs font-heading uppercase tracking-wider rounded transition-all cursor-pointer">
+                    Tout
+                </button>
+                @foreach ($types as $type)
+                    <button @click="filter = '{{ $type }}'"
+                        :class="filter === '{{ $type }}' ? 'bg-mw-red text-white' : 'bg-mw-dark text-gray-400 hover:text-white border border-white/10'"
+                        class="px-4 py-1.5 text-xs font-heading uppercase tracking-wider rounded transition-all cursor-pointer">
+                        {{ $typeLabels[$type] ?? strtoupper($type) }}
+                    </button>
+                @endforeach
+            </div>
+        @endif
 
         <div class="space-y-12">
             @forelse ($releases as $release)
-                <div class="flex flex-col md:flex-row gap-8 bg-mw-dark rounded-lg p-6 border border-white/5">
+                <div x-show="filter === 'all' || filter === '{{ $release->type }}'" x-transition class="flex flex-col md:flex-row gap-8 bg-mw-dark rounded-lg p-6 border border-white/5">
                     {{-- Cover --}}
                     @if ($release->cover)
                         <div class="flex-shrink-0">
