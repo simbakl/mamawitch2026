@@ -784,6 +784,7 @@ class ComposerStaticInitc3594066bd02d34ba9d1df171135e17b
         'App\\Filament\\Pages\\ProAccessMatrix' => __DIR__ . '/../..' . '/app/Filament/Pages/ProAccessMatrix.php',
         'App\\Filament\\Pages\\ProContent' => __DIR__ . '/../..' . '/app/Filament/Pages/ProContent.php',
         'App\\Filament\\Pages\\SiteSettings' => __DIR__ . '/../..' . '/app/Filament/Pages/SiteSettings.php',
+        'App\\Filament\\Pages\\SiteUpdate' => __DIR__ . '/../..' . '/app/Filament/Pages/SiteUpdate.php',
         'App\\Filament\\Pages\\TechSheet' => __DIR__ . '/../..' . '/app/Filament/Pages/TechSheet.php',
         'App\\Filament\\Resources\\ConcertResource' => __DIR__ . '/../..' . '/app/Filament/Resources/ConcertResource.php',
         'App\\Filament\\Resources\\ConcertResource\\Pages\\CreateConcert' => __DIR__ . '/../..' . '/app/Filament/Resources/ConcertResource/Pages/CreateConcert.php',
