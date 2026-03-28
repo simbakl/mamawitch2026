@@ -50,7 +50,8 @@ class MyProfile extends Page implements Forms\Contracts\HasForms
                             ->imageResizeTargetWidth('600')
                             ->imageResizeTargetHeight('800')
                             ->directory('members')
-                            ->visibility('public'),
+                            ->visibility('public')
+                            ->maxSize(5120),
                         Forms\Components\TextInput::make('instruments')
                             ->label('Instrument(s)')
                             ->required()

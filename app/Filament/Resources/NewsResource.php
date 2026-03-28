@@ -69,7 +69,8 @@ class NewsResource extends Resource
                             ->image()
                             ->directory('news')
                             ->visibility('public')
-                            ->imageResizeTargetWidth('1200'),
+                            ->imageResizeTargetWidth('1200')
+                            ->maxSize(5120),
                         Forms\Components\TextInput::make('youtube_url')
                             ->label('Vidéo YouTube')
                             ->url()

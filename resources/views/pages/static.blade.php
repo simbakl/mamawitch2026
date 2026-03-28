@@ -8,7 +8,7 @@
         <h1 class="font-display text-3xl md:text-4xl uppercase tracking-wider mb-8">{{ $page->title }}</h1>
 
         <div class="prose prose-invert prose-red max-w-none">
-            {!! $page->body !!}
+            {!! clean($page->body) !!}
         </div>
     </div>
 </div>
