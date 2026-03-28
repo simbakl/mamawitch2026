@@ -11,8 +11,18 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TechSheetPdfController;
 use Illuminate\Support\Facades\Route;
 
-// Sitemap
+// Sitemap & robots.txt
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', function () {
+    // Block all crawlers on non-production environments
+    if (app()->environment('production') && ! str_contains(config('app.url'), 'preprod')) {
+        $content = "User-agent: *\nAllow: /\n\nDisallow: /admin\nDisallow: /pro\nDisallow: /auth\nDisallow: /livewire\nDisallow: /tech-sheet\nDisallow: /deploy\n\nSitemap: " . url('/sitemap.xml');
+    } else {
+        $content = "User-agent: *\nDisallow: /";
+    }
+
+    return response($content, 200)->header('Content-Type', 'text/plain');
+});
 
 // Public pages
 Route::get('/', [PageController::class, 'home'])->name('home');
@@ -85,8 +95,7 @@ Route::get('/pro/audio/{track}', [ProAudioController::class, 'stream'])
     ->middleware(['page.active:pro', 'auth', 'pro'])
     ->name('pro.audio.stream');
 
-// Deploy (no SSH on OVH shared hosting)
-Route::get('/deploy/run', [DeployController::class, 'run'])->name('deploy.run');
+// Deploy route is registered in routes/deploy.php (no middleware)
 
 // Account setup & password reset
 Route::get('/account/setup/{token}', [AccountSetupController::class, 'show'])->name('account.setup');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Filament\Pages\PageManager;
+use App\Mail\ContactFormMail;
 use App\Models\Concert;
 use App\Models\ContactMessage;
 use App\Models\Gallery;
@@ -14,6 +15,7 @@ use App\Models\SiteSetting;
 use App\Models\StaticPage;
 use App\Models\Video;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PageController extends Controller
 {
@@ -145,9 +147,13 @@ class PageController extends Controller
 
         unset($validated['honeypot']);
 
-        ContactMessage::create($validated);
+        $contactMessage = ContactMessage::create($validated);
 
-        return back()->with('success', 'Votre message a bien ete envoye. Nous vous repondrons dans les plus brefs delais.');
+        // Send notification email to contact@mamawitch.fr
+        Mail::to(SiteSetting::get('contact_email', 'contact@mamawitch.fr'))
+            ->send(new ContactFormMail($contactMessage));
+
+        return back()->with('success', 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.');
     }
 
     public function staticPage(string $slug)

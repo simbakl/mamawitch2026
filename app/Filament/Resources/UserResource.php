@@ -84,7 +84,7 @@ class UserResource extends Resource
                         Forms\Components\Placeholder::make('google_status')
                             ->label('Compte Google')
                             ->content(fn (?User $record) => $record?->google_id
-                                ? 'Lié'
+                                ? 'Lié (' . ($record->google_email ?? $record->email) . ')'
                                 : 'Non lié'
                             ),
                         Forms\Components\Placeholder::make('password_status')
@@ -105,7 +105,7 @@ class UserResource extends Resource
                             ->dehydrated(false)
                             ->afterStateUpdated(function ($state, ?User $record) {
                                 if ($state && $record) {
-                                    $record->update(['google_id' => null, 'avatar' => null]);
+                                    $record->update(['google_id' => null, 'google_email' => null, 'avatar' => null]);
                                 }
                             }),
                     ])

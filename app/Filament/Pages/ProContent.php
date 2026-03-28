@@ -157,20 +157,32 @@ class ProContent extends Page implements HasForms
                                     ->addActionLabel('Ajouter un article'),
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Photos')
-                            ->icon('heroicon-o-photo')
+                        Forms\Components\Tabs\Tab::make('Assets')
+                            ->icon('heroicon-o-folder-open')
                             ->schema([
                                 Forms\Components\Placeholder::make('')
-                                    ->content('Photos haute définition téléchargeables par les pros autorisés.'),
+                                    ->content('Fichiers téléchargeables par les pros autorisés (photos, PSD, AI, vidéos, PDF, Word, Excel...).'),
                                 Forms\Components\FileUpload::make('photos_hd')
                                     ->label('')
                                     ->multiple()
                                     ->reorderable()
-                                    ->image()
                                     ->disk('pro-files')
-                                    ->directory('photos-hd')
+                                    ->directory('assets')
                                     ->visibility('public')
-                                    ->maxSize(10240),
+                                    ->maxSize(51200)
+                                    ->acceptedFileTypes([
+                                        'image/*',
+                                        'video/*',
+                                        'application/pdf',
+                                        'application/postscript',
+                                        'application/illustrator',
+                                        'application/msword',
+                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                        'application/vnd.ms-excel',
+                                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                        'image/vnd.adobe.photoshop',
+                                        'application/x-photoshop',
+                                    ]),
                             ]),
 
                         Forms\Components\Tabs\Tab::make('Logos')
@@ -205,12 +217,6 @@ class ProContent extends Page implements HasForms
                                     ->content('Pour modifier le contenu, utilisez "Mon Équipement" et "Mes Besoins Techniques" dans Mon Espace.'),
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Scène')
-                            ->icon('heroicon-o-map')
-                            ->schema([
-                                Forms\Components\Placeholder::make('')
-                                    ->content('Le plan de scène sera disponible dans une version future (V2).'),
-                            ]),
                     ])
                     ->columnSpanFull()
                     ->contained(false)

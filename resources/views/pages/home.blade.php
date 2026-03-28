@@ -5,7 +5,11 @@
 {{-- HERO --}}
 <section class="relative h-screen flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0">
-        @if ($hero['image'])
+        @if ($hero['image'] && str_ends_with(strtolower($hero['image']), '.mp4'))
+            <video autoplay muted loop playsinline class="w-full h-full object-cover">
+                <source src="{{ asset('storage/' . $hero['image']) }}" type="video/mp4">
+            </video>
+        @elseif ($hero['image'])
             <img src="{{ asset('storage/' . $hero['image']) }}" alt="Mama Witch - Hard Rock Paris" class="w-full h-full object-cover">
         @else
             <img src="{{ asset('images/hero-bg.jpg') }}" alt="Mama Witch - Hard Rock Paris" class="w-full h-full object-cover">
@@ -14,8 +18,9 @@
     </div>
 
     <div class="relative text-center px-4">
+        <h1 class="sr-only">Mama Witch — Groupe de Hard Rock, Paris</h1>
         @if ($hero['logo_enabled'])
-            <img src="{{ $hero['logo_image'] ? asset('storage/' . $hero['logo_image']) : asset('images/logo-white.png') }}" alt="Mama Witch" class="h-36 md:h-60 mx-auto mb-6">
+            <img src="{{ $hero['logo_image'] ? asset('storage/' . $hero['logo_image']) : asset('images/logo-white.png') }}" alt="Mama Witch - Groupe de Hard Rock Paris" class="h-36 md:h-60 mx-auto mb-6">
         @endif
         @if ($hero['subtitle'])
             <p class="text-lg md:text-2xl font-heading uppercase tracking-widest text-gray-300 mb-8">{{ $hero['subtitle'] }}</p>

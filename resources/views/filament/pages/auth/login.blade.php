@@ -1,4 +1,10 @@
 <x-filament-panels::page.simple>
+    @if (session('error'))
+        <div class="rounded-lg bg-danger-50 dark:bg-danger-400/10 p-4 mb-4">
+            <p class="text-sm text-danger-600 dark:text-danger-400">{{ session('error') }}</p>
+        </div>
+    @endif
+
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
     <x-filament-panels::form id="form" wire:submit="authenticate">

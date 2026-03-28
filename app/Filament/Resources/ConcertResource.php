@@ -108,9 +108,15 @@ class ConcertResource extends Resource
                             ->directory('concerts')
                             ->visibility('public')
                             ->imageResizeTargetWidth('800'),
-                        Forms\Components\Textarea::make('description')
+                        Forms\Components\RichEditor::make('description')
                             ->label('Description / Notes')
-                            ->rows(3)
+                            ->toolbarButtons([
+                                'bold', 'italic', 'underline',
+                                'h2', 'h3',
+                                'bulletList', 'orderedList',
+                                'link', 'blockquote',
+                                'redo', 'undo',
+                            ])
                             ->columnSpanFull(),
                     ]),
             ]);
