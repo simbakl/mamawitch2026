@@ -85,7 +85,7 @@
             </div>
 
             <div class="text-center pt-4">
-                <button type="submit" class="inline-block px-8 py-3 bg-mw-red hover:bg-mw-red-dark text-white font-heading uppercase tracking-wider text-sm transition-all duration-300 rounded">
+                <button type="submit" class="inline-block px-8 py-3 bg-mw-red hover:bg-mw-red-dark text-white font-heading uppercase tracking-wider text-sm transition-all duration-300 rounded cursor-pointer">
                     Envoyer ma demande
                 </button>
             </div>

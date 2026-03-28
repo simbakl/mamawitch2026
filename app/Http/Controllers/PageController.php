@@ -153,7 +153,7 @@ class PageController extends Controller
         Mail::to(SiteSetting::get('contact_email', 'contact@mamawitch.fr'))
             ->send(new ContactFormMail($contactMessage));
 
-        return back()->with('success', 'Votre message a bien ete envoye. Nous vous repondrons dans les plus brefs delais.');
+        return back()->with('success', 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.');
     }
 
     public function staticPage(string $slug)

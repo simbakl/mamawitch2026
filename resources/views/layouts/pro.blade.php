@@ -40,7 +40,7 @@
                         </div>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="text-gray-500 hover:text-white text-sm transition-colors">
+                            <button type="submit" class="text-gray-500 hover:text-white text-sm transition-colors cursor-pointer">
                                 Déconnexion
                             </button>
                         </form>

@@ -63,10 +63,12 @@ class MyAccount extends Page implements HasForms
                             ->content(function () {
                                 $user = auth()->user();
                                 if ($user->google_id) {
+                                    $googleEmail = $user->google_email ?? $user->email;
+
                                     return new HtmlString(
                                         '<div class="flex items-center gap-2 text-green-400">
                                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                            Compte Google lié (' . e($user->email) . ')
+                                            Compte Google lié (' . e($googleEmail) . ')
                                         </div>'
                                     );
                                 }
@@ -87,7 +89,7 @@ class MyAccount extends Page implements HasForms
                                 ->requiresConfirmation()
                                 ->visible(fn () => (bool) auth()->user()->google_id)
                                 ->action(function () {
-                                    auth()->user()->update(['google_id' => null, 'avatar' => null]);
+                                    auth()->user()->update(['google_id' => null, 'google_email' => null, 'avatar' => null]);
                                     Notification::make()->success()->title('Compte Google délié')->send();
                                     $this->redirect(static::getUrl());
                                 }),

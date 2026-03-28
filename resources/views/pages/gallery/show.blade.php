@@ -44,7 +44,7 @@
          @click.self="close()">
 
         {{-- Close --}}
-        <button @click="close()" class="absolute top-4 right-4 text-white/60 hover:text-white transition-colors z-10 p-2" aria-label="Fermer">
+        <button @click="close()" class="absolute top-4 right-4 text-white/60 hover:text-white transition-colors z-10 p-2 cursor-pointer" aria-label="Fermer">
             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
@@ -54,7 +54,7 @@
         </div>
 
         {{-- Prev --}}
-        <button @click="prev()" class="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors p-2" aria-label="Photo précédente">
+        <button @click="prev()" class="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors p-2 cursor-pointer" aria-label="Photo précédente">
             <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </button>
 
@@ -64,7 +64,7 @@
              @click.stop>
 
         {{-- Next --}}
-        <button @click="next()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors p-2" aria-label="Photo suivante">
+        <button @click="next()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors p-2 cursor-pointer" aria-label="Photo suivante">
             <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </button>
 
