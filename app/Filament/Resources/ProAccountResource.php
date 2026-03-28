@@ -64,7 +64,7 @@ class ProAccountResource extends Resource
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('email')
-                            ->label('Email Google')
+                            ->label('Email')
                             ->email()
                             ->required()
                             ->maxLength(255),
@@ -96,15 +96,6 @@ class ProAccountResource extends Resource
                             ])
                             ->required()
                             ->native(false),
-                        Forms\Components\Placeholder::make('invitation_link')
-                            ->label('Lien d\'invitation')
-                            ->content(function (?ProAccount $record) {
-                                if (! $record?->invitation_token) {
-                                    return 'Aucun lien généré';
-                                }
-                                return url('/pro/invitation/' . $record->invitation_token);
-                            })
-                            ->visible(fn (?ProAccount $record) => $record?->invitation_token),
                         Forms\Components\Placeholder::make('google_linked')
                             ->label('Compte Google')
                             ->content(fn (?ProAccount $record) => $record?->user_id ? 'Lié' : 'Non lié'),
