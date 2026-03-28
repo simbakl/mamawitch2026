@@ -21,6 +21,7 @@ return array(
     'App\\Filament\\Pages\\ProAccessMatrix' => $baseDir . '/app/Filament/Pages/ProAccessMatrix.php',
     'App\\Filament\\Pages\\ProContent' => $baseDir . '/app/Filament/Pages/ProContent.php',
     'App\\Filament\\Pages\\SiteSettings' => $baseDir . '/app/Filament/Pages/SiteSettings.php',
+    'App\\Filament\\Pages\\SiteUpdate' => $baseDir . '/app/Filament/Pages/SiteUpdate.php',
     'App\\Filament\\Pages\\TechSheet' => $baseDir . '/app/Filament/Pages/TechSheet.php',
     'App\\Filament\\Resources\\ConcertResource' => $baseDir . '/app/Filament/Resources/ConcertResource.php',
     'App\\Filament\\Resources\\ConcertResource\\Pages\\CreateConcert' => $baseDir . '/app/Filament/Resources/ConcertResource/Pages/CreateConcert.php',
