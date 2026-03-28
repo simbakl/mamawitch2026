@@ -69,6 +69,12 @@ class ProController extends Controller
                 ->with('error', 'Ce lien d\'invitation est invalide ou a déjà été utilisé.');
         }
 
+        // Token expires after 7 days
+        if ($proAccount->invitation_sent_at && $proAccount->invitation_sent_at->addDays(7)->isPast()) {
+            return redirect()->route('pro.request')
+                ->with('error', 'Ce lien d\'invitation a expiré. Veuillez contacter le groupe pour en obtenir un nouveau.');
+        }
+
         // Check if a user already exists for this email
         $user = User::where('email', $proAccount->email)->first();
 
@@ -103,6 +109,10 @@ class ProController extends Controller
     {
         $user = auth()->user();
         $proAccount = $user->proAccount;
+
+        if (! $proAccount?->proType) {
+            abort(403, 'Accès non autorisé.');
+        }
 
         // Get accessible content types for this pro type
         $accessibleContentTypes = $proAccount->proType
@@ -139,6 +149,10 @@ class ProController extends Controller
         $user = auth()->user();
         $proAccount = $user->proAccount;
 
+        if (! $proAccount?->proType) {
+            abort(403, 'Accès non autorisé.');
+        }
+
         $contentType = ProContentType::where('slug', $slug)->firstOrFail();
 
         // Check access
@@ -163,6 +177,15 @@ class ProController extends Controller
         $user = auth()->user();
         $proAccount = $user->proAccount;
 
+        if (! $proAccount?->proType) {
+            abort(403);
+        }
+
+        // Prevent path traversal
+        if (str_contains($filename, '..') || str_contains($filename, '\\')) {
+            abort(400);
+        }
+
         // Check access to this content type
         $contentType = ProContentType::where('slug', $type)->firstOrFail();
         $hasAccess = $proAccount->proType->contentTypes()
@@ -174,13 +197,12 @@ class ProController extends Controller
         }
 
         $disk = \Illuminate\Support\Facades\Storage::disk('pro-files');
-        $path = $filename;
 
-        if (! $disk->exists($path)) {
+        if (! $disk->exists($filename)) {
             abort(404);
         }
 
-        return $disk->download($path, basename($filename));
+        return $disk->download($filename, basename($filename));
     }
 
     /**
@@ -190,6 +212,10 @@ class ProController extends Controller
     {
         $user = auth()->user();
         $proAccount = $user->proAccount;
+
+        if (! $proAccount?->proType) {
+            abort(403);
+        }
 
         $contentType = ProContentType::where('slug', $type)->firstOrFail();
         $hasAccess = $proAccount->proType->contentTypes()
@@ -232,6 +258,10 @@ class ProController extends Controller
     {
         $user = auth()->user();
         $proAccount = $user->proAccount;
+
+        if (! $proAccount) {
+            abort(403);
+        }
 
         // Check access
         if (! $proAccount->musicProjects()->where('music_projects.id', $project->id)->exists()) {

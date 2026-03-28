@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center h-16">
             {{-- Logo --}}
             <a href="{{ route('home') }}" class="flex-shrink-0">
-                <img src="{{ asset('images/logo-white.png') }}" alt="Mama Witch" class="h-8">
+                <img src="{{ asset('images/logo-white.png') }}" alt="Mama Witch" class="h-8 w-auto">
             </a>
 
             {{-- Desktop Menu --}}

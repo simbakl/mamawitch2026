@@ -59,7 +59,8 @@ class SiteSettings extends Page implements Forms\Contracts\HasForms
                                     ->label('Image / Vidéo de fond')
                                     ->directory('hero')
                                     ->visibility('public')
-                                    ->acceptedFileTypes(['image/*', 'video/mp4']),
+                                    ->acceptedFileTypes(['image/*', 'video/mp4'])
+                                    ->maxSize(10240),
                                 Forms\Components\Toggle::make('hero_logo_enabled')
                                     ->label('Afficher le logo dans le hero')
                                     ->default(true)
@@ -71,6 +72,7 @@ class SiteSettings extends Page implements Forms\Contracts\HasForms
                                     ->directory('hero')
                                     ->visibility('public')
                                     ->acceptedFileTypes(['image/*'])
+                                    ->maxSize(5120)
                                     ->visible(fn (Forms\Get $get) => (bool) $get('hero_logo_enabled')),
                                 Forms\Components\TextInput::make('hero_title')
                                     ->label('Titre principal')

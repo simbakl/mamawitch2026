@@ -164,6 +164,29 @@ class SiteUpdate extends Page
         $this->checked = false;
     }
 
+    public function clearCache(): void
+    {
+        $this->logHtml = '';
+
+        $commands = [
+            'config:clear' => 'Cache config',
+            'route:clear' => 'Cache routes',
+            'view:clear' => 'Cache vues',
+            'cache:clear' => 'Cache application',
+        ];
+
+        foreach ($commands as $command => $label) {
+            try {
+                Artisan::call($command);
+                $this->addLog('success', $label . ' : vidé');
+            } catch (\Throwable $e) {
+                $this->addLog('error', $label . ' : ' . $e->getMessage());
+            }
+        }
+
+        $this->addLog('success', 'Tous les caches ont été vidés');
+    }
+
     public static function canAccess(): bool
     {
         return auth()->user()?->hasRole('admin') ?? false;

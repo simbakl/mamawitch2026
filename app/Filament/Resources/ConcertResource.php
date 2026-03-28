@@ -107,7 +107,8 @@ class ConcertResource extends Resource
                             ->image()
                             ->directory('concerts')
                             ->visibility('public')
-                            ->imageResizeTargetWidth('800'),
+                            ->imageResizeTargetWidth('800')
+                            ->maxSize(5120),
                         Forms\Components\RichEditor::make('description')
                             ->label('Description / Notes')
                             ->toolbarButtons([

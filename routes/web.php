@@ -57,7 +57,7 @@ Route::middleware('page.active:discographie')->group(function () {
 
 Route::middleware('page.active:contact')->group(function () {
     Route::get('/contact', [PageController::class, 'contact'])->name('contact');
-    Route::post('/contact', [PageController::class, 'contactSubmit'])->name('contact.submit');
+    Route::post('/contact', [PageController::class, 'contactSubmit'])->name('contact.submit')->middleware('throttle:5,1');
 });
 
 // Tech Sheet PDF
@@ -73,7 +73,7 @@ Route::get('/admin/audio/{track}', [AdminAudioController::class, 'stream'])
 // Pro - Public
 Route::middleware('page.active:pro')->group(function () {
     Route::get('/pro/demande', [ProController::class, 'accessRequest'])->name('pro.request');
-    Route::post('/pro/demande', [ProController::class, 'accessRequestSubmit'])->name('pro.request.submit');
+    Route::post('/pro/demande', [ProController::class, 'accessRequestSubmit'])->name('pro.request.submit')->middleware('throttle:3,1');
     Route::get('/pro/invitation/{token}', [ProController::class, 'invitation'])->name('pro.invitation');
 });
 

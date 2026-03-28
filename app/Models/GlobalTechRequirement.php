@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class GlobalTechRequirement extends Model
 {
@@ -10,11 +11,12 @@ class GlobalTechRequirement extends Model
 
     public static function get(string $key, mixed $default = null): mixed
     {
-        return static::where('key', $key)->value('value') ?? $default;
+        return Cache::rememberForever('global_tech_' . $key, fn () => static::where('key', $key)->value('value') ?? $default);
     }
 
     public static function set(string $key, mixed $value): void
     {
         static::updateOrCreate(['key' => $key], ['value' => $value]);
+        Cache::forget('global_tech_' . $key);
     }
 }

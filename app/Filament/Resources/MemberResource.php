@@ -24,6 +24,11 @@ class MemberResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with('user');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -62,7 +67,8 @@ class MemberResource extends Resource
                             ->imageResizeTargetWidth('600')
                             ->imageResizeTargetHeight('800')
                             ->directory('members')
-                            ->visibility('public'),
+                            ->visibility('public')
+                            ->maxSize(5120),
                     ]),
 
                 Forms\Components\Section::make('Biographie')
